@@ -175,6 +175,8 @@
     async function apiFetch(url, options = {}) {
       const method = (options.method || "GET").toUpperCase();
       const headers = new Headers(options.headers || {});
+      const token = localStorage.getItem("debsoc_token");
+      if (token) headers.set("Authorization", `Bearer ${token}`);
       if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
         if (!csrfToken) {
           const csrfResponse = await fetch(`${API_BASE}/csrf-token`, { credentials: "include" });
@@ -193,7 +195,6 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      localStorage.removeItem("debsoc_token");
       syncNavAuth();
       fetchTournaments();
     });

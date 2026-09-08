@@ -10,8 +10,6 @@ const API_BASE = window.location.hostname === "localhost" || window.location.hos
   : "https://forkdebsoc.onrender.com/api";
 // For Vercel deployment with same-origin API routing:
 // const API_BASE = "/api";
-localStorage.removeItem("debsoc_token");
-
 // --- Session Helpers ---
 const getAuthToken = () => null;
 const getAuthUser = () => {
@@ -30,6 +28,8 @@ let csrfToken;
 const apiFetch = async (url, options = {}) => {
   const method = (options.method || "GET").toUpperCase();
   const headers = new Headers(options.headers || {});
+  const token = localStorage.getItem("debsoc_token");
+  if (token) headers.set("Authorization", `Bearer ${token}`);
   if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
     if (!csrfToken) {
       const csrfResponse = await fetch(`${API_BASE}/csrf-token`, { credentials: "include" });

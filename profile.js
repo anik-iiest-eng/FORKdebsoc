@@ -8,6 +8,8 @@ let csrfToken;
 const apiFetch = async (url, options = {}) => {
   const method = (options.method || "GET").toUpperCase();
   const headers = new Headers(options.headers || {});
+  const token = localStorage.getItem("debsoc_token");
+  if (token) headers.set("Authorization", `Bearer ${token}`);
   if (!["GET", "HEAD", "OPTIONS"].includes(method)) {
     if (!csrfToken) {
       const csrfResponse = await fetch(`${API_BASE}/csrf-token`, { credentials: "include" });

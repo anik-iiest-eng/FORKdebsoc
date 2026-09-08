@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Verification failed");
 
+        localStorage.setItem("debsoc_token", data.token);
         localStorage.setItem("debsoc_user", JSON.stringify(data.user));
 
         showAlert(alertBox, "Verification successful! Redirecting...", "success");
@@ -147,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error(data.error || "Authentication failed.");
 
       if (isLoginMode) {
+        localStorage.setItem("debsoc_token", data.token);
         localStorage.setItem("debsoc_user", JSON.stringify(data.user));
 
         showAlert(alertBox, "Login successful! Redirecting...", "success");
