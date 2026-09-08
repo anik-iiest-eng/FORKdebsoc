@@ -5,12 +5,118 @@
 // ----- Mobile Menu -----
 const menu = document.getElementById("mobile-menu");
 const button = document.getElementById("hamburger-btn");
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:5000/api"
+  : "/api";
+localStorage.removeItem("debsoc_token");
+
+// --- Session Helpers ---
+const getAuthToken = () => null;
+const getAuthUser = () => {
+  const user = localStorage.getItem("debsoc_user");
+  return user ? JSON.parse(user) : null;
+};
+const isAuthenticated = () => !!getAuthUser();
+
+const logoutUser = async () => {
+  await apiFetch(`${API_BASE}/auth/logout`, { method: "POST" });
+  localStorage.removeItem("debsoc_user");
+  window.location.reload();
+};
+
+let csrfToken;
+const apiFetch = async (url, options = {}) => {
+  const method = (options.method || "GET").toUpperCase();
+  const headers = new Headers(options.headers || {});
+  if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
+    if (!csrfToken) {
+      const csrfResponse = await fetch(`${API_BASE}/csrf-token`, { credentials: "include" });
+      const csrfData = await csrfResponse.json();
+      csrfToken = csrfData.csrfToken;
+    }
+    headers.set("X-CSRF-Token", csrfToken);
+  }
+  return fetch(url, { ...options, credentials: "include", headers });
+};
+
+// --- Auth API Calls ---
+const loginUser = async (email, password) => {
+  const res = await apiFetch(`${API_BASE}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: email.trim(), password })
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Login failed");
+
+  localStorage.setItem("debsoc_user", JSON.stringify(data.user));
+  return data;
+};
+
+const registerUser = async (displayName, username, email, password) => {
+  const res = await apiFetch(`${API_BASE}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      displayName: displayName.trim(),
+      username: username.trim(),
+      email: email.trim().toLowerCase(),
+      password
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Registration failed");
+  return data;
+};
+
+// --- Event API Calls ---
+const fetchEvents = async () => {
+  const res = await apiFetch(`${API_BASE}/events`);
+  if (!res.ok) throw new Error("Failed to load events");
+  return await res.json();
+};
+
+const registerForEvent = async (eventId) => {
+  if (!isAuthenticated()) throw new Error("Please log in to register for this debate.");
+
+  const res = await apiFetch(`${API_BASE}/events/${eventId}/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Event registration failed");
+  return data;
+};
+
+// --- Achievement / Winner Code API Calls ---
+const redeemWinnerCode = async (code) => {
+  if (!isAuthenticated()) throw new Error("Please log in to redeem an award.");
+
+  const res = await apiFetch(`${API_BASE}/achievements/redeem`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ code: code.trim() })
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Redemption failed");
+  return data;
+};
 
 function toggleMobileMenu() {
+  if (!menu) return;
   menu.classList.toggle("hidden");
 }
 
 document.addEventListener("click", function(event) {
+  if (!menu || !button) return;
 
   const isClickInsideMenu = menu.contains(event.target);
   const isClickOnButton = button.contains(event.target);
@@ -18,8 +124,17 @@ document.addEventListener("click", function(event) {
   if (!isClickInsideMenu && !isClickOnButton) {
     menu.classList.add("hidden");
   }
-
 });
+
+window.getAuthToken = getAuthToken;
+window.getAuthUser = getAuthUser;
+window.isAuthenticated = isAuthenticated;
+window.logoutUser = logoutUser;
+window.loginUser = loginUser;
+window.registerUser = registerUser;
+window.fetchEvents = fetchEvents;
+window.registerForEvent = registerForEvent;
+window.redeemWinnerCode = redeemWinnerCode;
 
 // ----- About Us scroll / navigate -----
 function handleAboutClick() {

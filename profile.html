@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile | DebSoc IIEST Shibpur</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="tailwind.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink: #f4e8d4; --black: #080808; --panel: #141414; --red: #e3292e; --red-dark: #7c1118; --muted: #b9a995; }
+    * { box-sizing: border-box; }
+    body { background: var(--black); color: var(--ink); font-family: "IBM Plex Mono", monospace; }
+    .profile-shell { min-height: 100vh; position: relative; overflow: hidden; background: linear-gradient(145deg, #070707 0%, #1a090a 52%, #080808 100%); }
+    .profile-shell::after { content: ""; pointer-events: none; position: fixed; z-index: 20; inset: 0; opacity: .2; mix-blend-mode: screen; background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.16) 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, rgba(227,41,46,.1) 0 1px, transparent 1px 7px); }
+    .profile-hero { background: #0b0b0b !important; border-color: rgba(227,41,46,.45) !important; }
+    nav.profile-hero { border-bottom: 2px solid var(--red); box-shadow: 0 8px 0 rgba(227,41,46,.08); }
+    nav.profile-hero a { color: var(--ink) !important; }
+    nav.profile-hero a:last-child { border-color: var(--red) !important; color: var(--red) !important; }
+    #profile-content > .profile-hero { border: 1px solid rgba(227,41,46,.65); border-radius: 4px !important; box-shadow: 8px 8px 0 rgba(124,17,24,.45) !important; }
+    #profile-banner { position: relative; background-color: #1b0506; opacity: 1 !important; isolation: isolate; }
+    #profile-banner::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: .2; background: repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 1px, transparent 1px 5px), repeating-linear-gradient(90deg, rgba(227,41,46,.28) 0 2px, transparent 2px 9px); mix-blend-mode: screen; }
+    #profile-banner::after { content: "PROFILE // ARCHIVE"; position: absolute; z-index: 2; right: 1rem; bottom: .75rem; color: var(--red); font: 600 10px "IBM Plex Mono", monospace; letter-spacing: .18em; text-shadow: 2px 2px #000; }
+    .avatar { width: 112px; height: 112px; object-fit: cover; border: 3px solid var(--red) !important; background: #080808 !important; position: relative; overflow: hidden; }
+    .avatar img { filter: contrast(1.2) saturate(.72) sepia(.12); }
+    .avatar::after { content: ""; pointer-events: none; position: absolute; inset: 0; opacity: .2; background: repeating-linear-gradient(0deg, rgba(255,255,255,.3) 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, rgba(227,41,46,.25) 0 1px, transparent 1px 6px); mix-blend-mode: screen; }
+    .avatar-fallback { display: grid; place-items: center; font: 700 36px "Space Grotesk", sans-serif; color: var(--red); }
+    #profile-name, #profile-role, #profile-username { color: var(--ink) !important; }
+    #profile-role { color: var(--red) !important; }
+    #profile-username { opacity: .65; }
+    #spotify-link, #social-links a, #edit-profile-btn { border-color: var(--red) !important; color: var(--red) !important; border-radius: 2px !important; }
+    #profile-edit-form, #redeem-section, #profile-content section { background: var(--panel) !important; border-color: rgba(227,41,46,.55) !important; border-radius: 3px !important; box-shadow: 5px 5px 0 rgba(124,17,24,.28); }
+    #profile-edit-form h2, #redeem-section h2, #profile-content section h2 { color: var(--red) !important; }
+    #profile-edit-form label, #redeem-section p, #profile-bio, #profile-content section span { color: var(--muted) !important; }
+    #profile-edit-form input, #profile-edit-form textarea, #redeem-code { background: #050505 !important; color: var(--ink) !important; border-color: rgba(227,41,46,.5) !important; border-radius: 2px !important; }
+    #profile-edit-form button[type="submit"], #redeem-form button { background: var(--red-dark) !important; border: 1px solid var(--red) !important; border-radius: 2px !important; }
+    #profile-edit-form button[type="button"] { border-color: var(--red) !important; color: var(--red) !important; border-radius: 2px !important; }
+    #profile-content .bg-\[\#6b0f1a\] { background: var(--red-dark) !important; border: 1px solid var(--red); border-radius: 2px; }
+    .award-row { border-left: 3px solid var(--red) !important; background: #0b0b0b !important; color: var(--ink); border-radius: 0 2px 2px 0 !important; }
+    #achievement-list article p { color: var(--ink) !important; }
+    #achievement-list article p:last-child { color: var(--red) !important; }
+    #profile-status { color: var(--red) !important; }
+    @media (max-width: 640px) {
+      .profile-shell main { padding-left: 1rem; padding-right: 1rem; }
+      #profile-content > .profile-hero .flex { align-items: flex-start; }
+      #profile-banner { height: 9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-shell">
+    <nav class="profile-hero px-5 py-4 text-[#FAF7F2]">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-4">
+        <a href="index.html" class="font-serif-title text-sm tracking-wide">THE DEBATING SOCIETY OF IIEST SHIBPUR</a>
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <a id="my-profile-link" class="hidden rounded border border-white/30 px-3 py-2 text-xs hover:bg-white/10" href="#">My Profile</a>
+          <form id="profile-search-form" class="flex gap-1">
+            <input id="profile-search-input" class="w-32 rounded border border-[#e3292e]/60 bg-black px-2 py-2 text-xs text-[#f4e8d4]" placeholder="username" aria-label="Find a profile">
+            <button class="rounded border border-[#e3292e] px-3 py-2 text-xs text-[#e3292e] hover:bg-[#7c1118]" type="submit">Find</button>
+          </form>
+          <a href="history.html" class="rounded border border-white/30 px-3 py-2 text-xs hover:bg-white/10">Back to history</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="mx-auto max-w-6xl px-5 py-10">
+      <div id="profile-status" class="py-16 text-center font-mono text-sm text-[#5c3a30]">Loading profile...</div>
+      <section id="profile-content" class="hidden">
+        <div class="profile-hero overflow-hidden rounded-2xl text-[#FAF7F2] shadow-xl">
+          <div id="profile-banner" class="h-40 bg-cover bg-center opacity-80"></div>
+          <div class="flex flex-col gap-5 px-6 pb-8 md:flex-row md:items-end md:px-10">
+            <div id="profile-avatar" class="avatar avatar-fallback -mt-14 rounded-full"></div>
+            <div class="flex-1">
+              <p id="profile-role" class="font-mono text-xs uppercase tracking-[.22em] text-[#e8b84b]"></p>
+              <h1 id="profile-name" class="mt-1 font-serif-title text-3xl"></h1>
+              <p id="profile-username" class="mt-1 text-sm text-white/70"></p>
+            </div>
+              <button id="edit-profile-btn" type="button" class="hidden rounded border border-[#e8b84b]/60 px-4 py-2 text-xs text-[#e8b84b] hover:bg-white/10">Edit Profile</button>
+            <a id="spotify-link" class="hidden rounded border border-[#e8b84b]/60 px-4 py-2 text-xs text-[#e8b84b] hover:bg-white/10" target="_blank" rel="noreferrer">Spotify</a>
+            <div id="social-links" class="flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+          <form id="profile-edit-form" class="hidden mt-6 rounded-2xl border border-[#c9963a]/30 bg-white/80 p-6 shadow-sm">
+            <h2 class="font-serif-title text-xl text-[#6b0f1a]">Edit profile</h2>
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
+              <label class="text-xs text-[#5c3a30]">Display name<input id="edit-display-name" class="mt-1 w-full rounded border border-[#c9963a]/40 bg-white px-3 py-2 text-sm" maxlength="100" required></label>
+              <label class="text-xs text-[#5c3a30]">Profile image URL<input id="edit-profile-image" type="url" class="mt-1 w-full rounded border border-[#c9963a]/40 bg-white px-3 py-2 text-sm"></label>
+              <label class="text-xs text-[#5c3a30]">Banner image URL<input id="edit-banner-image" type="url" class="mt-1 w-full rounded border border-[#c9963a]/40 bg-white px-3 py-2 text-sm"></label>
+              <label class="text-xs text-[#5c3a30]">Spotify URL<input id="edit-spotify-link" type="url" class="mt-1 w-full rounded border border-[#c9963a]/40 bg-white px-3 py-2 text-sm"></label>
+              <label class="text-xs text-[#5c3a30] md:col-span-2">Biography<textarea id="edit-bio" rows="4" maxlength="2000" class="mt-1 w-full rounded border border-[#c9963a]/40 bg-white px-3 py-2 text-sm"></textarea></label>
+              <label class="text-xs text-[#5c3a30] md:col-span-2">Social links, one per line as <span class="font-mono">Label | https://...</span><textarea id="edit-social-links" rows="5" class="mt-1 w-full rounded border border-[#c9963a]/40 bg-white px-3 py-2 text-sm" placeholder="LinkedIn | https://linkedin.com/in/your-name"></textarea></label>
+            </div>
+            <p id="profile-edit-status" class="mt-3 hidden text-xs"></p>
+            <div class="mt-4 flex gap-3">
+              <button type="submit" class="rounded bg-[#6b0f1a] px-4 py-2 text-xs text-white">Save Changes</button>
+              <button id="cancel-profile-edit" type="button" class="rounded border border-[#6b0f1a]/30 px-4 py-2 text-xs text-[#6b0f1a]">Cancel</button>
+            </div>
+          </form>
+
+          <section id="redeem-section" class="hidden mt-6 rounded-2xl border border-[#c9963a]/30 bg-white/80 p-6 shadow-sm">
+            <h2 class="font-serif-title text-xl text-[#6b0f1a]">Redeem award code</h2>
+            <p class="mt-1 text-xs text-[#5c3a30]">Enter the private code provided by the DebSoc administrator.</p>
+            <form id="redeem-form" class="mt-4 flex flex-col gap-3 sm:flex-row">
+              <input id="redeem-code" required maxlength="100" autocomplete="off" class="flex-1 rounded border border-[#c9963a]/40 bg-white px-3 py-2 text-sm" placeholder="DEBSOC-XXXXXXXX">
+              <button type="submit" class="rounded bg-[#6b0f1a] px-4 py-2 text-xs text-white">Redeem Code</button>
+            </form>
+            <p id="redeem-status" class="mt-3 hidden text-xs"></p>
+          </section>
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+          <section class="rounded-2xl border border-[#c9963a]/30 bg-white/70 p-6 shadow-sm">
+            <h2 class="font-serif-title text-xl text-[#6b0f1a]">About</h2>
+            <p id="profile-bio" class="mt-4 whitespace-pre-wrap text-sm leading-7 text-[#5c3a30]"></p>
+            <div class="mt-6 grid grid-cols-2 gap-3 text-center">
+              <div class="rounded-lg bg-[#6b0f1a] p-4 text-white"><strong id="achievement-count" class="block text-2xl text-[#e8b84b]"></strong><span class="text-xs">Awards</span></div>
+              <div class="rounded-lg bg-[#6b0f1a] p-4 text-white"><strong id="registration-count" class="block text-2xl text-[#e8b84b]"></strong><span class="text-xs">Registrations</span></div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-[#c9963a]/30 bg-white/70 p-6 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <h2 class="font-serif-title text-xl text-[#6b0f1a]">Verified achievements</h2>
+              <span class="font-mono text-xs text-[#5c3a30]">DebSoc record</span>
+            </div>
+            <div id="achievement-list" class="mt-5 space-y-3"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="profile.js"></script>
+</body>
+</html>

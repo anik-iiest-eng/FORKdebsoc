@@ -1,0 +1,201 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User role permissions
+enum Role {
+  USER
+  ADMIN
+}
+
+// Lifecycle of an event
+enum EventStatus {
+  DRAFT
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+// Event categorization
+enum EventType {
+  MAIN
+  OTHERS
+}
+
+// Style preset enum selection
+enum StyleType {
+  STYLE_1
+  STYLE_2
+  STYLE_3
+}
+
+model User {
+  id           String        @id @default(uuid())
+  displayName  String        @map("display_name")
+  username     String        @unique
+  email        String        @unique
+  passwordHash String        @map("password_hash")
+  profileImage String?       @map("profile_image")
+  bannerImage  String?       @map("banner_image")
+  spotifyLink  String?       @map("spotify_link")
+  socialLinks  Json?         @map("social_links")
+  bio          String?
+
+  // UI Theme preferences
+  selectedStyle StyleType    @default(STYLE_1) @map("selected_style")
+  style1        String?      @map("style_1") // Placeholder custom config 1
+  style2        String?      @map("style_2") // Placeholder custom config 2
+  style3        String?      @map("style_3") // Placeholder custom config 3
+
+  role         Role          @default(USER)
+  isVerified   Boolean       @default(false) @map("is_verified")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  otps          OtpVerification[]
+  registrations EventParticipant[]
+  achievements  Achievement[]
+  comments      Comment[]
+  auditLogs     AuditLog[] @relation("AuditActor")
+
+  @@map("users")
+}
+
+model OtpVerification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  otpHash   String   @map("otp_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("otp_verifications")
+}
+
+model Event {
+  id                   String      @id @default(uuid())
+  title                String
+  description          String
+  eventType            EventType   @default(MAIN) @map("event_type")
+  organizerId          String      @map("organizer_id")
+  eventDate            DateTime    @map("event_date")
+  registrationDeadline DateTime    @map("registration_deadline")
+  location             String
+  coverImage           String      @default("https://via.placeholder.com/600x400") @map("cover_image")
+  status               EventStatus @default(UPCOMING)
+  createdAt            DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  participants EventParticipant[]
+  winnerCodes  WinnerCode[]
+  achievements Achievement[]
+  comments     Comment[]
+  historyEntry History?
+
+  @@map("events")
+}
+
+model History {
+  id          String    @id @default(uuid())
+  eventId     String?   @unique @map("event_id")
+  title       String
+  description String
+  eventType   EventType @map("event_type")
+  location    String
+  coverImage  String    @map("cover_image")
+  images      String[]  @default([]) // <-- Multi-image array
+  awardCount  Int?      @map("award_count")
+  eventDate   DateTime  @map("event_date")
+  archivedAt  DateTime  @default(now()) @map("archived_at")
+
+  // Relations
+  event        Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  achievements Achievement[]
+  winnerCodes  WinnerCode[]
+
+  @@map("history")
+}
+model EventParticipant {
+  id           String   @id @default(uuid())
+  eventId      String   @map("event_id")
+  userId       String   @map("user_id")
+  registeredAt DateTime @default(now()) @map("registered_at")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@map("event_participants")
+}
+
+model WinnerCode {
+  id               String    @id @default(uuid())
+  eventId          String?   @map("event_id")
+  historyId        String?   @map("history_id")
+  codeHash         String    @unique @map("code_hash")
+  positionTitle    String    @map("position_title")
+  isRedeemed       Boolean   @default(false) @map("is_redeemed")
+  redeemedByUserId String?   @map("redeemed_by_user_id")
+  redeemedAt       DateTime? @map("redeemed_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  event       Event?       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  history     History?     @relation(fields: [historyId], references: [id], onDelete: Cascade)
+  achievement Achievement?
+
+  @@map("winner_codes")
+}
+
+model Achievement {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  eventId      String?  @map("event_id")
+  historyId    String?  @map("history_id")
+  winnerCodeId String   @unique @map("winner_code_id")
+  position     String
+  awardedAt    DateTime @default(now()) @map("awarded_at")
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event      Event?      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  history    History?    @relation(fields: [historyId], references: [id], onDelete: Cascade)
+  winnerCode WinnerCode  @relation(fields: [winnerCodeId], references: [id], onDelete: Restrict)
+
+  @@map("achievements")
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  eventId     String   @map("event_id")
+  userId      String   @map("user_id")
+  content     String
+  isAnonymous Boolean  @default(false) @map("is_anonymous")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String   @map("actor_id")
+  action    String
+  targetId  String   @map("target_id")
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  actor User @relation("AuditActor", fields: [actorId], references: [id], onDelete: Restrict)
+
+  @@index([targetId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

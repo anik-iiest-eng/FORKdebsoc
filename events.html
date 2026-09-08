@@ -3,79 +3,385 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Events — Debating Society IIEST Shibpur</title>
+  <title>Events & Tournaments — Debating Society IIEST Shibpur</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    .font-serif-title { font-family: 'Playfair Display', serif; }
+    .font-sans-body { font-family: 'Montserrat', sans-serif; }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+  </style>
 </head>
-<body class="h-full overflow-auto bg-[#0B0C10]">
-<div class="w-full h-full flex flex-col justify-between">
+<body class="h-full overflow-auto bg-[#0B0C10] font-sans-body text-[#FAF7F2] flex flex-col justify-between selection:bg-[#DAA520] selection:text-[#800020]">
 
-  
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden px-5 py-3 rounded-lg text-xs font-mono-code shadow-2xl border transition-all duration-300 transform"></div>
 
-  <section class="relative flex flex-col items-center justify-center flex-grow min-h-[75vh] overflow-hidden px-6">
-    <img src="debsoclogo.webp" alt="" class="absolute opacity-5 w-[380px] md:w-[480px] pointer-events-none select-none filter grayscale mix-blend-screen">
+  <nav class="w-full px-4 md:px-6 py-3 sticky top-0 z-50 backdrop-blur-md transition-all shadow-lg" 
+       style="background: linear-gradient(135deg, rgba(128, 0, 32, 0.96) 0%, rgba(70, 0, 18, 0.96) 100%);">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 lg:gap-4">
+      
+      <a href="index.html" class="flex items-center gap-2 md:gap-3 flex-shrink-0 group">
+        <img src="debsoclogo.webp" alt="Logo" class="h-9 md:h-10 w-auto object-contain transition-transform group-hover:scale-105">
+        <div class="tracking-wide text-[#FAF7F2]">
+          <div class="hidden md:block text-[14px] lg:text-[15px] font-semibold uppercase leading-tight whitespace-nowrap font-serif-title">
+            THE DEBATING SOCIETY<br>
+            <span class="text-[11px] lg:text-[12px] font-normal opacity-90 tracking-widest font-sans-body">OF IIEST SHIBPUR</span>
+          </div>
+          <div class="md:hidden text-[13px] font-semibold uppercase whitespace-nowrap font-serif-title leading-tight">
+            THE DEBATING SOCIETY<br><span class="text-[10px] font-normal tracking-widest font-sans-body">IIEST SHIBPUR</span>
+          </div>
+        </div>
+      </a>
 
-    <div class="relative z-10 text-center max-w-xl">
-      <h1 class="text-4xl md:text-5xl font-bold text-white tracking-wide" style="font-family: 'Playfair Display', serif;">
-        THIS PAGE IS UNDER
-      </h1>
-      <h2 class="text-5xl md:text-7xl font-black mt-2 tracking-wider" style="color: #C9963A; font-family: 'Playfair Display', serif;">
-        MAINTENANCE
-      </h2>
-      <p class="mt-6 text-base md:text-lg font-light tracking-wide" style="color: #D1D5DB; font-family: 'Montserrat', sans-serif;">
-        We're currently polishing up our flagship event indices and conclave records. Please trace back shortly.
+      <div class="hidden md:flex items-center gap-5 lg:gap-6">
+        <a href="index.html" class="text-[13px] font-medium px-3 py-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-all">Home</a>
+        <a href="aboutus.html" class="text-[13px] font-medium px-3 py-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-all">About Us</a>
+        
+        <div class="relative group">
+          <button class="text-[13px] font-medium px-3 py-1.5 rounded-md bg-white/15 text-white flex items-center gap-1">
+            Events 
+            <svg class="w-4 h-4 opacity-80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          </button>
+          <div class="absolute left-0 mt-1 w-44 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 border border-[#800020]/20 overflow-hidden" style="background-color:#FAF7F2;">
+            <a href="events.html" class="block px-4 py-2.5 text-xs tracking-wide font-semibold hover:bg-[#800020]/10" style="color:#800020;">CIRCUIT TOURNAMENTS</a>
+            <a href="becon.html" class="block px-4 py-2.5 text-xs tracking-wide font-semibold hover:bg-[#800020]/10" style="color:#800020;">BECON CONCLAVE</a>
+          </div>
+        </div>
+
+        <a href="gallery.html" class="text-[13px] font-medium px-3 py-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-all">Gallery</a>
+        <a href="tribunal.html" class="text-[13px] font-medium px-3 py-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-all">Tribunal</a>
+        <a href="teampage.html" class="text-[13px] font-medium px-3 py-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-all">Team</a>
+
+        <div id="nav-auth-container" class="flex items-center pl-2">
+          <a href="register.html" class="px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md hover:brightness-110 active:scale-95" style="background:#DAA520; color:#800020;">
+            Register
+          </a>
+        </div>
+      </div>
+
+      <button id="hamburger-btn" onclick="toggleMobileMenu()" class="md:hidden text-[#FAF7F2] p-1">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu" class="md:hidden hidden flex-col pb-4 pt-3 gap-1 border-t border-white/10 mt-2">
+      <a href="index.html" class="px-4 py-2.5 text-sm rounded-lg hover:bg-white/10 block text-[#FAF7F2]">Home</a>
+      <a href="aboutus.html" class="px-4 py-2.5 text-sm rounded-lg hover:bg-white/10 block text-[#FAF7F2]">About Us</a>
+      <a href="events.html" class="px-4 py-2.5 text-sm rounded-lg bg-white/15 block font-semibold text-[#FAF7F2]">Main Events</a>
+      <a href="becon.html" class="px-4 py-2.5 text-sm rounded-lg hover:bg-white/10 block text-[#FAF7F2]">Becon #1.0</a>
+      <a href="gallery.html" class="px-4 py-2.5 text-sm rounded-lg hover:bg-white/10 block text-[#FAF7F2]">Gallery</a>
+      <a href="tribunal.html" class="px-4 py-2.5 text-sm rounded-lg hover:bg-white/10 block text-[#FAF7F2]">Tribunal</a>
+      <a href="teampage.html" class="px-4 py-2.5 text-sm rounded-lg hover:bg-white/10 block text-[#FAF7F2]">Team</a>
+      <div id="mobile-auth-container" class="pt-2">
+        <a href="register.html" class="block px-4 py-2.5 text-sm rounded-full text-center font-bold tracking-wider uppercase" style="background:#DAA520; color:#800020; margin:0 1rem;">
+          Register / Sign In
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-6 border-b border-neutral-800 gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#DAA520]/30 bg-[#DAA520]/10 text-[#DAA520] text-xs font-mono-code mb-3">
+          <span class="w-2 h-2 rounded-full bg-[#DAA520] animate-pulse"></span>
+          OFFICIAL PARLIAMENTARY CIRCUIT
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide text-white font-serif-title">
+          Tournaments & Sessions
+        </h1>
+      </div>
+      <p class="text-xs md:text-sm text-neutral-400 max-w-md font-light leading-relaxed">
+        Live debate registrations, Asian Parliamentary fixtures, and Model United Nations conclaves hosted by DebSoc IIEST Shibpur.
       </p>
     </div>
-  </section>
 
-  <footer class="px-6 py-12" style="background-color:#1a0008;">
+    <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+      
+      <div class="border border-neutral-800/80 bg-[#12141a] rounded-xl p-6 h-80 animate-pulse flex flex-col justify-between">
+        <div class="h-40 bg-neutral-800/50 rounded-lg mb-4"></div>
+        <div class="space-y-2">
+          <div class="h-4 bg-neutral-800/80 rounded w-3/4"></div>
+          <div class="h-3 bg-neutral-800/50 rounded w-full"></div>
+        </div>
+      </div>
+      <div class="border border-neutral-800/80 bg-[#12141a] rounded-xl p-6 h-80 animate-pulse flex flex-col justify-between">
+        <div class="h-40 bg-neutral-800/50 rounded-lg mb-4"></div>
+        <div class="space-y-2">
+          <div class="h-4 bg-neutral-800/80 rounded w-3/4"></div>
+          <div class="h-3 bg-neutral-800/50 rounded w-full"></div>
+        </div>
+      </div>
+      <div class="border border-neutral-800/80 bg-[#12141a] rounded-xl p-6 h-80 animate-pulse flex flex-col justify-between">
+        <div class="h-40 bg-neutral-800/50 rounded-lg mb-4"></div>
+        <div class="space-y-2">
+          <div class="h-4 bg-neutral-800/80 rounded w-3/4"></div>
+          <div class="h-3 bg-neutral-800/50 rounded w-full"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="px-6 py-12 border-t border-[#DAA520]/20" style="background-color:#140006;">
     <div class="max-w-6xl mx-auto">
       <div class="grid md:grid-cols-4 gap-8 mb-8">
         <div class="md:col-span-2">
           <div class="flex items-center gap-3 mb-4">
             <img src="debsoclogo.webp" alt="DEBSOC Logo" class="h-12 w-auto object-contain">
-            <span class="font-bold text-lg" style="color:#FAF7F2; font-family: 'Playfair Display', serif;">DebSoc</span>
+            <span class="font-bold text-xl font-serif-title text-[#FAF7F2]">DebSoc IIEST</span>
           </div>
-          <p class="text-sm opacity-70 max-w-xs" style="color:#FAF7F2; font-family: 'Montserrat', sans-serif;">A community dedicated to the synthesis of technical precision and humanistic inquiry. Through debates and formal discourse, we equip scholars with the cognitive agility to dissect multifaceted issues and defend truth through reasoned conviction.</p>
+          <p class="text-sm opacity-70 max-w-sm leading-relaxed text-[#FAF7F2]">
+            A community dedicated to the synthesis of technical precision and humanistic inquiry. Through debates and formal discourse, we equip scholars with the cognitive agility to dissect multifaceted issues and defend truth through reasoned conviction.
+          </p>
         </div>
         <div>
-          <h4 class="font-semibold mb-4" style="color:#DAA520; font-family: 'Playfair Display', serif;">Quick Links</h4>
-          <ul class="space-y-2 text-sm" style="font-family: 'Montserrat', sans-serif;">
-            <li><a href="index.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Home</a></li>
-            <li><a href="events.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Events</a></li>
-            <li><a href="tribunal.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Tribunal</a></li>
-            <li><a href="contactpage.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Contact</a></li>
+          <h4 class="font-semibold mb-4 text-[#DAA520] font-serif-title tracking-wider text-base">Quick Links</h4>
+          <ul class="space-y-2 text-sm text-[#FAF7F2]">
+            <li><a href="index.html" class="opacity-70 hover:opacity-100 hover:text-[#DAA520] transition-all">Home</a></li>
+            <li><a href="events.html" class="opacity-70 hover:opacity-100 hover:text-[#DAA520] transition-all">Events</a></li>
+            <li><a href="tribunal.html" class="opacity-70 hover:opacity-100 hover:text-[#DAA520] transition-all">Tribunal</a></li>
+            <li><a href="contactpage.html" class="opacity-70 hover:opacity-100 hover:text-[#DAA520] transition-all">Contact</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="font-semibold mb-4" style="color:#DAA520; font-family: 'Playfair Display', serif;">Connect</h4>
+          <h4 class="font-semibold mb-4 text-[#DAA520] font-serif-title tracking-wider text-base">Connect</h4>
           <div class="flex gap-3">
-            <a href="https://www.instagram.com/debsoc_iiests" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all" style="background-color:rgba(218,165,32,0.2);">
-              <svg class="w-5 h-5" fill="#DAA520" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            <a href="https://www.instagram.com/debsoc_iiests" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all border border-[#DAA520]/40" style="background-color:rgba(218,165,32,0.15);">
+              <svg class="w-5 h-5 fill-[#DAA520]" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             </a>
-            <a href="https://www.linkedin.com/company/debsoc-iiest-shibpur/" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all" style="background-color:rgba(218,165,32,0.2);">
-              <svg class="w-5 h-5" fill="#DAA520" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <a href="https://www.linkedin.com/company/debsoc-iiest-shibpur/" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all border border-[#DAA520]/40" style="background-color:rgba(218,165,32,0.15);">
+              <svg class="w-5 h-5 fill-[#DAA520]" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
             </a>
           </div>
         </div>
       </div>
-      <div class="pt-8 border-t text-center" style="border-color:rgba(218,165,32,0.2);">
-        <p class="text-sm opacity-60" style="color:#FAF7F2; font-family: 'Montserrat', sans-serif;">© 2026 The Debating Society. All rights reserved.</p>
+      <div class="pt-8 border-t text-center border-white/10">
+        <p class="text-sm opacity-60 text-[#FAF7F2]">© 2026 The Debating Society, IIEST Shibpur. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
-</div>
+  <script>
+    const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+      ? "http://localhost:5000/api"
+      : "/api";
+    let csrfToken;
 
-<script src="main.js"></script>
-<script>
-  function toggleMobileMenu() {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-    menu.classList.toggle('flex');
-  }
-</script>
-<script src="footer.js"></script>
-<script src="nav.js"></script>
+    async function apiFetch(url, options = {}) {
+      const method = (options.method || "GET").toUpperCase();
+      const headers = new Headers(options.headers || {});
+      if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
+        if (!csrfToken) {
+          const csrfResponse = await fetch(`${API_BASE}/csrf-token`, { credentials: "include" });
+          const csrfData = await csrfResponse.json();
+          csrfToken = csrfData.csrfToken;
+        }
+        headers.set("X-CSRF-Token", csrfToken);
+      }
+      return fetch(url, { ...options, credentials: "include", headers });
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+      menu.classList.toggle('flex');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      localStorage.removeItem("debsoc_token");
+      syncNavAuth();
+      fetchTournaments();
+    });
+
+    // 1. Sync User Session in Navbar
+    function syncNavAuth() {
+      const desktopNav = document.getElementById("nav-auth-container");
+      const mobileNav = document.getElementById("mobile-auth-container");
+      const userRaw = localStorage.getItem("debsoc_user");
+
+      if (userRaw) {
+        try {
+          const user = JSON.parse(userRaw);
+          const userBadgeHtml = `
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-mono-code text-[#DAA520] bg-[#DAA520]/10 border border-[#DAA520]/30 px-2.5 py-1 rounded-full">
+                <a href="profile.html?u=${encodeURIComponent(user.username)}" class="hover:text-white">@${user.username}</a>
+              </span>
+              <a href="profile.html?u=${encodeURIComponent(user.username)}" class="text-xs text-[#DAA520] hover:text-white">Profile</a>
+              <button onclick="handleLogout()" class="text-xs font-medium px-3 py-1.5 rounded-md text-white/80 hover:text-white hover:bg-white/10 transition-all border border-white/20">
+                Sign Out
+              </button>
+            </div>
+          `;
+          if (desktopNav) desktopNav.innerHTML = userBadgeHtml;
+          if (mobileNav) {
+            mobileNav.innerHTML = `
+              <div class="flex items-center justify-between px-4 py-2 bg-white/5 rounded-lg mx-4">
+                <a href="profile.html?u=${encodeURIComponent(user.username)}" class="text-xs font-mono-code text-[#DAA520]">@${user.username}</a>
+                <a href="profile.html?u=${encodeURIComponent(user.username)}" class="text-xs text-[#DAA520]">My Profile</a>
+                <button onclick="handleLogout()" class="text-xs text-red-300 font-semibold uppercase">Sign Out</button>
+              </div>
+            `;
+          }
+          return;
+        } catch (e) {
+          localStorage.removeItem("debsoc_user");
+        }
+      }
+    }
+
+    async function handleLogout() {
+      await apiFetch(`${API_BASE}/auth/logout`, { method: "POST" });
+      localStorage.removeItem("debsoc_user");
+      window.location.reload();
+    }
+
+    // 2. Fetch Active Tournaments
+    async function fetchTournaments() {
+      const grid = document.getElementById("events-grid");
+
+      try {
+        const res = await fetch(`${API_BASE}/events`);
+        if (!res.ok) throw new Error("Could not retrieve tournaments.");
+
+        const events = await res.json();
+
+        if (!Array.isArray(events) || events.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full border border-neutral-800 bg-[#12141a] p-12 rounded-xl text-center">
+              <p class="text-base text-neutral-300 font-serif-title">No upcoming tournaments currently scheduled.</p>
+              <p class="text-xs text-neutral-500 font-mono-code mt-2">Check back soon for fresher debates & flagship conclaves.</p>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = events.map(ev => renderEventCard(ev)).join("");
+        bindRegistrationHandlers();
+      } catch (err) {
+        grid.innerHTML = `
+          <div class="col-span-full border border-red-900/40 bg-red-950/20 p-8 rounded-xl text-center">
+            <p class="text-sm text-red-300 font-mono-code">${err.message || "Failed to load tournament feed."}</p>
+          </div>
+        `;
+      }
+    }
+
+    // 3. Render Card HTML
+    function renderEventCard(ev) {
+      const dateFormatted = new Date(ev.eventDate).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
+
+      const deadline = new Date(ev.registrationDeadline);
+      const isExpired = new Date() > deadline;
+
+      return `
+        <div class="border border-neutral-800/90 bg-[#12141a] hover:border-[#DAA520]/50 rounded-xl overflow-hidden flex flex-col justify-between transition-all duration-300 group shadow-lg">
+          <div>
+            <div class="relative h-44 w-full overflow-hidden bg-neutral-900">
+              <img 
+                src="${ev.coverImage || 'https://images.unsplash.com/photo-1544531585-9847b68c8c86'}" 
+                alt="${ev.title}" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85"
+              />
+              <div class="absolute top-3 left-3 bg-[#0B0C10]/80 backdrop-blur-md border border-[#DAA520]/30 px-2.5 py-1 rounded text-[10px] font-mono-code text-[#DAA520]">
+                ${ev.location || "IIEST Campus"}
+              </div>
+            </div>
+
+            <div class="p-5">
+              <div class="text-[11px] font-mono-code text-neutral-400 mb-2">
+                DATE: ${dateFormatted}
+              </div>
+              <h3 class="text-lg font-bold text-white font-serif-title mb-2 group-hover:text-[#DAA520] transition-colors">
+                ${ev.title}
+              </h3>
+              <p class="text-xs text-neutral-400 font-light line-clamp-3 leading-relaxed">
+                ${ev.description}
+              </p>
+            </div>
+          </div>
+
+          <div class="p-5 pt-0">
+            <div class="pt-4 border-t border-neutral-800/80 flex items-center justify-between gap-2">
+              <span class="text-[10px] font-mono-code ${isExpired ? 'text-red-400' : 'text-neutral-500'}">
+                ${isExpired ? 'Closed' : 'Deadline: ' + deadline.toLocaleDateString()}
+              </span>
+
+              <button 
+                data-id="${ev.id}" 
+                ${isExpired ? 'disabled' : ''} 
+                class="register-btn text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-sm ${
+                  isExpired 
+                    ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed' 
+                    : 'bg-[#DAA520] hover:bg-[#c49219] text-[#800020] active:scale-95'
+                }"
+              >
+                Register
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 4. Attach API Registration Click
+    function bindRegistrationHandlers() {
+      document.querySelectorAll(".register-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const eventId = e.currentTarget.getAttribute("data-id");
+          if (!localStorage.getItem("debsoc_user")) {
+            triggerToast("Please login with your IIEST student email to register.", "error");
+            setTimeout(() => { window.location.href = "register.html"; }, 1200);
+            return;
+          }
+
+          const button = e.currentTarget;
+          button.disabled = true;
+          button.innerText = "Registering...";
+
+          try {
+            const res = await apiFetch(`${API_BASE}/events/${eventId}/register`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" }
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Registration failed.");
+
+            triggerToast("Registration confirmed! Check your participant record.", "success");
+            button.innerText = "Registered ✓";
+            button.className = "text-xs font-semibold px-4 py-2 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800/60 cursor-default";
+          } catch (err) {
+            triggerToast(err.message, "error");
+            button.disabled = false;
+            button.innerText = "Register";
+          }
+        });
+      });
+    }
+
+    // 5. Toast Notifications
+    function triggerToast(msg, type = "success") {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+
+      toast.innerText = msg;
+      toast.className = `fixed bottom-6 right-6 z-50 px-5 py-3 rounded-lg text-xs font-mono-code border shadow-2xl transition-all duration-300 ${
+        type === "error" 
+          ? "bg-[#2b0c10] border-red-800 text-red-200" 
+          : "bg-[#0b2416] border-emerald-700 text-emerald-200"
+      }`;
+
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 3500);
+    }
+  </script>
 </body>
 </html>

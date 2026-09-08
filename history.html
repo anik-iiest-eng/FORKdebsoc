@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DebSoc — Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#000000;
+    --panel:#0e0e0e;
+    --red:#C41414;
+    --red-dim:#7a0d0d;
+    --gold:#C9963A;
+    --cream:#FAF6EE;
+    --cream-dim:#9c968a;
+    --hair:rgba(250,246,238,0.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--ink);color:var(--cream);}
+  body{ font-family:'DM Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+
+  /* ---------- top film reel ---------- */
+  .reel{ position:relative; background:#000; padding:9px 0; }
+  .reel::before, .reel::after{
+    content:""; position:absolute; left:0; right:0; height:7px;
+    background-image:repeating-linear-gradient(to right, var(--cream-dim) 0 5px, transparent 5px 15px);
+    opacity:0.55;
+  }
+  .reel::before{ top:0; }
+  .reel::after{ bottom:0; }
+  .reel-track{
+    display:flex; gap:2px;
+    overflow-x:auto;
+    padding:7px 0;
+    scrollbar-width:none;
+  }
+  .reel-track::-webkit-scrollbar{ display:none; }
+  .reel-frame{
+    position:relative; flex:0 0 auto;
+    width:170px; aspect-ratio:4/3;
+    border-right:1px solid rgba(255,255,255,0.1);
+  }
+  .reel-frame img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:grayscale(1) contrast(1.1) brightness(0.92);
+  }
+  .reel-label{
+    position:absolute; top:5px; left:6px;
+    font-size:9px; letter-spacing:0.08em; color:var(--cream);
+  }
+  .reel-num{
+    position:absolute; top:5px; right:6px;
+    font-size:9px; color:var(--cream-dim);
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{ padding:40px 24px 30px; border-bottom:1px solid var(--hair); }
+  .masthead-inner{
+    max-width:1180px; margin:0 auto;
+    display:flex; align-items:flex-end; justify-content:space-between;
+    gap:24px; flex-wrap:wrap;
+  }
+  .masthead .kicker{ font-size:12px; letter-spacing:0.18em; color:var(--cream-dim); margin-bottom:6px; }
+  .masthead h1{
+    font-family:'Anton',sans-serif; font-weight:400;
+    font-size:clamp(36px,6vw,64px); line-height:0.85;
+    margin:0; color:var(--red); text-transform:uppercase;
+  }
+  .masthead p.dek{
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px;
+    color:var(--cream-dim); max-width:280px; margin:0 0 8px; text-align:right;
+    border-left:2px solid var(--hair); padding-left:16px;
+  }
+
+  /* ---------- feed ---------- */
+  .feed{ max-width:1180px; margin:0 auto; padding:44px 20px 100px; }
+  .state{ text-align:center; padding:80px 20px; font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--cream-dim); }
+  .state .retry{
+    display:inline-block; margin-top:18px; padding:10px 22px;
+    border:1px solid var(--red); color:var(--red); background:none;
+    font-family:'DM Sans',sans-serif; font-size:13px; letter-spacing:0.06em; cursor:pointer;
+  }
+  .state .retry:hover{ background:rgba(196,20,20,0.12); }
+
+  /* =====================================================
+     HERO CARD — flagship (MAIN) events
+     ===================================================== */
+  .hero{
+    position:relative;
+    margin:0 0 56px;
+    min-height:560px;
+    background:#050505;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:1fr 220px;
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    filter:grayscale(0.85) contrast(1.05) brightness(0.4);
+  }
+  .hero-scrim{
+    position:absolute; inset:0;
+    background:linear-gradient(100deg, #000 20%, rgba(0,0,0,0.65) 55%, rgba(0,0,0,0.15) 100%);
+  }
+  .hero-ghost{
+    position:absolute; top:6%; right:6%;
+    font-family:'Anton',sans-serif;
+    font-size:clamp(30px,5vw,64px);
+    line-height:0.94;
+    color:rgba(250,246,238,0.07);
+    text-transform:uppercase;
+    max-width:46%; text-align:right;
+    pointer-events:none; z-index:1;
+  }
+  .hero-ribbon{
+    position:absolute; top:-15%; left:14%;
+    width:110px; height:150%;
+    background:linear-gradient(180deg, var(--red), var(--red-dim));
+    transform:rotate(11deg);
+    opacity:0.92; z-index:1;
+  }
+  .star{
+    position:absolute; width:52px; height:52px;
+    clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background:var(--red); z-index:3;
+  }
+  .star::after{
+    content:""; position:absolute; inset:16%;
+    clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    background:var(--cream);
+  }
+  .star.tl{ top:34px; left:32px; }
+  .star.bl{ bottom:34px; left:32px; }
+
+  .hero-content{
+    position:relative; z-index:2;
+    padding:56px 44px;
+    display:flex; flex-direction:column;
+    justify-content:center;
+    max-width:640px;
+  }
+  .hero-tag{
+    display:inline-block; align-self:flex-start;
+    background:var(--red); color:#000;
+    font-size:12px; font-weight:700; letter-spacing:0.08em;
+    padding:6px 14px; margin-bottom:18px;
+  }
+  .hero-title{
+    font-family:'Anton',sans-serif; font-weight:400;
+    font-size:clamp(46px,6.5vw,86px);
+    line-height:0.86;
+    text-transform:uppercase;
+    margin:0 0 8px;
+    color:var(--cream);
+  }
+  .hero-location{
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px;
+    color:var(--cream-dim); margin:0 0 18px;
+  }
+  .hero-desc{
+    font-family:'Cormorant Garamond',serif; font-size:19px; line-height:1.5;
+    color:var(--cream-dim); max-width:440px; margin:0 0 26px;
+  }
+  .hero-stats{ display:flex; gap:32px; margin-bottom:28px; }
+  .hero-stats .stat .num{
+    font-family:'Anton',sans-serif; font-size:32px; color:var(--cream); line-height:1;
+  }
+  .hero-stats .stat .lbl{ font-size:11px; letter-spacing:0.08em; color:var(--cream-dim); }
+
+  .hero-inset{
+    width:220px; max-width:60%;
+    border:5px solid var(--cream);
+    aspect-ratio:16/11;
+    overflow:hidden;
+  }
+  .hero-inset img{
+    width:100%; height:100%; object-fit:cover;
+    filter:grayscale(1) contrast(1.05);
+  }
+
+  /* right vertical strip */
+  .hero-strip{
+    position:relative; z-index:2;
+    display:grid; grid-template-rows:repeat(3,1fr);
+    gap:4px; padding:4px;
+    background:rgba(0,0,0,0.5);
+  }
+  .hero-strip .frame{ position:relative; border:1px solid var(--hair); overflow:hidden; background:#000; }
+  .hero-strip .frame img{
+    width:100%; height:100%; object-fit:cover; display:block;
+    filter:grayscale(1) contrast(1.1) brightness(0.95);
+  }
+  .hero-strip .fnum{
+    position:absolute; top:0; left:0; writing-mode:vertical-rl;
+    font-size:9px; letter-spacing:0.1em; color:var(--cream);
+    background:rgba(0,0,0,0.65); padding:6px 3px; border-right:1px solid var(--hair);
+  }
+
+  @media (max-width:760px){
+    .hero{ grid-template-columns:1fr; min-height:0; }
+    .hero-strip{ grid-template-rows:none; grid-template-columns:repeat(3,1fr); }
+    .hero-strip .frame{ aspect-ratio:1/1; }
+    .hero-content{ padding:44px 24px 24px; }
+    .hero-ribbon{ display:none; }
+    .hero-ghost{ display:none; }
+    .star{ width:38px; height:38px; }
+    .star.tl{ top:18px; left:18px; }
+    .star.bl{ display:none; }
+  }
+
+  /* =====================================================
+     STANDARD CARD — non-flagship events
+     ===================================================== */
+  .card{ position:relative; margin:48px 0; padding:32px 0 0; border-top:1px solid var(--hair); }
+  .card-head{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px; }
+  .badge{ font-size:11px; letter-spacing:0.12em; color:var(--cream); border:1px solid var(--hair); padding:5px 12px; }
+  .meta{ font-size:13px; color:var(--cream-dim); white-space:nowrap; }
+  .title-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:4px; }
+  .card h2{
+    font-family:'Anton',sans-serif; font-weight:400;
+    font-size:clamp(28px,4vw,44px); line-height:0.92;
+    text-transform:uppercase; margin:0; max-width:640px;
+  }
+  .statline{ text-align:right; flex:none; }
+  .statline .num{ font-family:'Anton',sans-serif; font-size:clamp(26px,3.6vw,38px); color:var(--red); line-height:1; }
+  .statline .lbl{ font-size:11px; letter-spacing:0.1em; color:var(--cream-dim); }
+  .location{ font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px; color:var(--cream-dim); margin:6px 0 22px; }
+
+  .body-grid{ display:grid; gap:8px; }
+  .gallery{ display:grid; gap:8px; position:relative; }
+  .gallery img{ width:100%; height:100%; object-fit:cover; display:block; filter:grayscale(1) contrast(1.08) brightness(0.95); }
+  .frame{ position:relative; border:1px solid var(--hair); background:#000; overflow:hidden; }
+  .frame .fnum{
+    position:absolute; top:0; left:0; writing-mode:vertical-rl;
+    font-size:10px; letter-spacing:0.12em; color:var(--cream);
+    background:rgba(0,0,0,0.65); padding:8px 4px; border-right:1px solid var(--hair);
+  }
+
+  .variant-a .gallery{ grid-template-columns:1.5fr 1fr; grid-template-rows:1fr 1fr; }
+  .variant-a .frame.main{ grid-row:1/3; aspect-ratio:4/5; }
+  .variant-a .frame.sub{ aspect-ratio:1/1; }
+
+  .variant-b .frame.main{ aspect-ratio:16/7; margin-bottom:8px; }
+  .variant-b .strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .variant-b .strip .frame{ aspect-ratio:3/4; }
+
+  .variant-c .gallery{ grid-template-columns:1fr 1.6fr; }
+  .variant-c .strip{ display:grid; grid-template-rows:repeat(4,1fr); gap:8px; }
+  .variant-c .strip .frame{ aspect-ratio:1/1; }
+  .variant-c .frame.main{ aspect-ratio:3/4; }
+
+  .variant-d .gallery{ grid-template-columns:repeat(6,1fr); grid-template-rows:repeat(2,minmax(90px,1fr)); }
+  .variant-d .frame.main{ grid-column:1/4; grid-row:1/3; }
+  .variant-d .frame.s1{ grid-column:4/6; grid-row:1/2; }
+  .variant-d .frame.s2{ grid-column:6/7; grid-row:1/2; }
+  .variant-d .frame.s3{ grid-column:4/5; grid-row:2/3; }
+  .variant-d .frame.s4{ grid-column:5/7; grid-row:2/3; }
+
+  @media (max-width:640px){
+    .variant-a .gallery, .variant-c .gallery{ grid-template-columns:1fr; }
+    .variant-a .frame.main{ grid-row:auto; aspect-ratio:16/10; }
+    .variant-c .strip{ grid-template-rows:none; grid-template-columns:repeat(4,1fr); order:2; }
+    .variant-c .strip .frame{ aspect-ratio:1/1; }
+    .variant-c .frame.main{ order:1; aspect-ratio:16/10; }
+    .variant-d .gallery{ grid-template-columns:repeat(2,1fr); grid-template-rows:auto; }
+    .variant-d .frame.main{ grid-column:1/3; grid-row:auto; aspect-ratio:16/10; }
+    .variant-d .frame.s1,.variant-d .frame.s2,.variant-d .frame.s3,.variant-d .frame.s4{ grid-column:auto; grid-row:auto; aspect-ratio:1/1; }
+  }
+
+  .card-foot{ display:grid; grid-template-columns:1.4fr 1fr; gap:32px; margin-top:22px; padding-top:20px; padding-bottom:8px; }
+  @media (max-width:640px){ .card-foot{ grid-template-columns:1fr; } }
+  .desc{ font-family:'Cormorant Garamond',serif; font-size:18px; line-height:1.55; color:var(--cream-dim); }
+  .awards h3{ font-family:'DM Sans',sans-serif; font-size:12px; letter-spacing:0.12em; color:var(--red); margin:0 0 12px; }
+  .award-row{ display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--hair); text-decoration:none; }
+  .award-row:last-child{ border-bottom:none; }
+  .avatar{ width:32px; height:32px; object-fit:cover; background:var(--red-dim); flex:none; filter:grayscale(1); }
+  .avatar.fallback{ display:flex; align-items:center; justify-content:center; font-family:'Anton',sans-serif; font-size:13px; color:var(--cream); }
+  .award-text{ font-size:14px; }
+  .award-text .pos{ color:var(--red); font-weight:700; }
+  .award-text .name{ color:var(--cream); }
+</style>
+</head>
+<body>
+
+<div class="reel" id="reel" style="display:none;">
+  <div class="reel-track" id="reel-track"></div>
+</div>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="kicker">THE DEBSOC ARCHIVE</div>
+      <h1>History</h1>
+    </div>
+    <p class="dek">Every parliament called, every argument won, every name that answered the gavel.</p>
+  </div>
+</header>
+
+<main class="feed" id="feed">
+  <div class="state">Unrolling the archive…</div>
+</main>
+
+<script>
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:5000/api"
+  : "/api";
+const API_URL = `${API_BASE}/history`;
+const DEFAULT_PLACEHOLDER = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1400&q=80";
+
+const DATE_FMT = new Intl.DateTimeFormat("en-GB", { day:"numeric", month:"long", year:"numeric" });
+
+function initials(name){
+  if(!name) return "?";
+  return name.split(" ").filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join("");
+}
+
+function avatarHTML(user){
+  if(user && user.profileImage){
+    return `<img class="avatar" src="${escapeHTML(user.profileImage)}" alt="${escapeHTML(user.displayName||"")}">`;
+  }
+  return `<div class="avatar fallback">${initials(user && user.displayName)}</div>`;
+}
+
+function escapeHTML(str){
+  if(!str) return "";
+  const d = document.createElement("div");
+  d.textContent = String(str);
+  return d.innerHTML;
+}
+
+// Extract distinct images from primary cover and the images array
+function resolveImages(entry, count){
+  const rawPool = [entry.coverImage, ...(entry.images || [])].filter(Boolean);
+  const pool = rawPool.length ? rawPool : [DEFAULT_PLACEHOLDER];
+  const out = [];
+  for(let i=0; i<count; i++) {
+    out.push(pool[i % pool.length]);
+  }
+  return out;
+}
+
+/* ---------- top film reel ---------- */
+function renderReel(entries){
+  const reel = document.getElementById("reel");
+  const track = document.getElementById("reel-track");
+  const pool = [];
+
+  entries.forEach(e => {
+    if(e.coverImage) pool.push({ src: e.coverImage, label: e.location || "IIEST" });
+    (e.images || []).forEach(img => {
+      if(img) pool.push({ src: img, label: e.location || "IIEST" });
+    });
+  });
+
+  if(!pool.length){ 
+    reel.style.display = "none"; 
+    return; 
+  }
+
+  const frames = pool.slice(0, 12);
+  track.innerHTML = frames.map((f, i) => `
+    <div class="reel-frame">
+      <img src="${escapeHTML(f.src)}" alt="Event Photo">
+      <span class="reel-label">${escapeHTML(f.label.toUpperCase())}</span>
+      <span class="reel-num">▶ ${10+i}</span>
+    </div>`).join("");
+  reel.style.display = "block";
+}
+
+/* ---------- hero card (MAIN events) ---------- */
+function heroHTML(entry){
+  const strip = resolveImages(entry, 3);
+  const winner = (entry.achievements || [])[0];
+  const insetImg = (winner && winner.user && winner.user.profileImage) || entry.coverImage || DEFAULT_PLACEHOLDER;
+  const year = new Date(entry.eventDate).getFullYear();
+  const achievements = entry.achievements || [];
+  const displayedAwardCount = Number.isInteger(entry.awardCount) ? entry.awardCount : achievements.length;
+
+  return `
+  <article class="hero">
+    <div class="hero-bg" style="background-image:url('${escapeHTML(entry.coverImage || DEFAULT_PLACEHOLDER)}')"></div>
+    <div class="hero-scrim"></div>
+    <div class="hero-ghost">${escapeHTML(entry.location || "")}</div>
+    <div class="hero-ribbon"></div>
+    <span class="star tl"></span>
+    <span class="star bl"></span>
+
+    <div class="hero-content">
+      <span class="hero-tag">${year} EDITION</span>
+      <h2 class="hero-title">${escapeHTML(entry.title || "Untitled")}</h2>
+      <p class="hero-location">${escapeHTML(entry.location || "IIEST Shibpur")}</p>
+      <p class="hero-desc">${escapeHTML(entry.description || "")}</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="num">${displayedAwardCount}</div>
+          <div class="lbl">AWARDS GIVEN</div>
+        </div>
+        <div class="stat">
+          <div class="num">${DATE_FMT.format(new Date(entry.eventDate)).split(" ")[1] || ""}</div>
+          <div class="lbl">${year}</div>
+        </div>
+      </div>
+      <div class="hero-inset"><img src="${escapeHTML(insetImg)}" alt="Featured Awardee"></div>
+    </div>
+
+    <div class="hero-strip">
+      ${strip.map((src, i) => `
+        <div class="frame">
+          <img src="${escapeHTML(src)}" alt="Event Snapshot">
+          <span class="fnum">▶ ${10+i}</span>
+        </div>`).join("")}
+    </div>
+  </article>`;
+}
+
+/* ---------- standard card (OTHERS) ---------- */
+function galleryHTML(entry, variant){
+  const main = entry.coverImage || (entry.images && entry.images[0]) || DEFAULT_PLACEHOLDER;
+  const subs = resolveImages(entry, 4);
+
+  if(variant === "variant-b"){
+    return `
+      <div class="frame main"><img src="${escapeHTML(main)}" alt="Cover"></div>
+      <div class="strip">${subs.map((src,i)=>`<div class="frame"><img src="${escapeHTML(src)}" alt="Gallery"><span class="fnum">▶ ${11+i}</span></div>`).join("")}</div>`;
+  }
+  if(variant === "variant-c"){
+    return `
+      <div class="gallery">
+        <div class="strip">${subs.map((src,i)=>`<div class="frame"><img src="${escapeHTML(src)}" alt="Gallery"><span class="fnum">▶ ${11+i}</span></div>`).join("")}</div>
+        <div class="frame main"><img src="${escapeHTML(main)}" alt="Cover"></div>
+      </div>`;
+  }
+  if(variant === "variant-d"){
+    return `
+      <div class="gallery">
+        <div class="frame main"><img src="${escapeHTML(main)}" alt="Cover"><span class="fnum">▶ 12</span></div>
+        ${subs.map((src,i)=>`<div class="frame s${i+1}"><img src="${escapeHTML(src)}" alt="Gallery"></div>`).join("")}
+      </div>`;
+  }
+  return `
+    <div class="gallery">
+      <div class="frame main"><img src="${escapeHTML(main)}" alt="Cover"><span class="fnum">▶ 12</span></div>
+      ${subs.map((src)=>`<div class="frame sub"><img src="${escapeHTML(src)}" alt="Gallery"></div>`).join("")}
+    </div>`;
+}
+
+function cardHTML(entry, variantIndex){
+  const variants = ["variant-a","variant-b","variant-c","variant-d"];
+  const variant = variants[variantIndex % variants.length];
+  const gallery = `<div class="body-grid ${variant}">${galleryHTML(entry, variant)}</div>`;
+  const achievements = entry.achievements || [];
+  const displayedAwardCount = Number.isInteger(entry.awardCount) ? entry.awardCount : achievements.length;
+
+  return `
+  <article class="card">
+    <div class="card-head">
+      <span class="badge">Event</span>
+      <span class="meta">${DATE_FMT.format(new Date(entry.eventDate))}</span>
+    </div>
+    <div class="title-row">
+      <h2>${escapeHTML(entry.title || "Untitled")}</h2>
+      ${displayedAwardCount ? `
+        <div class="statline">
+          <div class="num">${displayedAwardCount}</div>
+          <div class="lbl">${displayedAwardCount === 1 ? "AWARD GIVEN" : "AWARDS GIVEN"}</div>
+        </div>` : ""}
+    </div>
+    <p class="location">${escapeHTML(entry.location || "IIEST Shibpur")}</p>
+    ${gallery}
+    <div class="card-foot">
+      <p class="desc">${escapeHTML(entry.description || "")}</p>
+      ${achievements.length ? `
+        <div class="awards">
+          <h3>Results</h3>
+          ${achievements.map(a => {
+            const user = a.user;
+            const profileLink = user && user.username ? `profile.html?u=${encodeURIComponent(user.username)}` : '#';
+            return `
+            <a href="${profileLink}" class="award-row">
+              ${avatarHTML(user)}
+              <div class="award-text">
+                <span class="pos">${escapeHTML(a.position)}</span> —
+                <span class="name">${escapeHTML(user ? user.displayName : "Verified Awardee")}</span>
+              </div>
+            </a>`;
+          }).join("")}
+        </div>` : ""}
+    </div>
+  </article>`;
+}
+
+function render(entries){
+  const feed = document.getElementById("feed");
+  if(!entries || !entries.length){
+    feed.innerHTML = `<div class="state">No debates or tournaments archived yet.</div>`;
+    document.getElementById("reel").style.display = "none";
+    return;
+  }
+
+  const sorted = [...entries].sort((a,b) => new Date(b.eventDate) - new Date(a.eventDate));
+  renderReel(sorted);
+
+  let variantIndex = 0;
+  feed.innerHTML = sorted.map(entry => {
+    if(entry.eventType === "MAIN") return heroHTML(entry);
+    const html = cardHTML(entry, variantIndex);
+    variantIndex++;
+    return html;
+  }).join("");
+}
+
+async function load(){
+  const feed = document.getElementById("feed");
+  feed.innerHTML = `<div class="state">Unrolling the archive…</div>`;
+  try{
+    const res = await fetch(API_URL);
+    if(!res.ok) throw new Error("Server responded with status " + res.status);
+    const data = await res.json();
+    render(Array.isArray(data) ? data : []);
+  }catch(err){
+    console.error("Failed to load history from database:", err);
+    feed.innerHTML = `
+      <div class="state">
+        Couldn't reach the archive database.<br>
+        <button class="retry" onclick="load()">Retry Connection</button>
+      </div>`;
+  }
+}
+function avatarHTML(user){
+  if(user && user.profileImage){
+    return `<img class="avatar" referrerpolicy="no-referrer" src="${escapeHTML(user.profileImage)}" alt="${escapeHTML(user.displayName||"")}">`;
+  }
+  return `<div class="avatar fallback">${initials(user && user.displayName)}</div>`;
+}
+
+function heroHTML(entry){
+  const strip = resolveImages(entry, 3);
+  const winner = (entry.achievements || [])[0];
+  const insetImg = (winner && winner.user && winner.user.profileImage) || entry.coverImage || DEFAULT_PLACEHOLDER;
+  const year = new Date(entry.eventDate).getFullYear();
+  const achievements = entry.achievements || [];
+  const displayedAwardCount = Number.isInteger(entry.awardCount) ? entry.awardCount : achievements.length;
+
+  return `
+  <article class="hero">
+    <div class="hero-bg" style="background-image:url('${escapeHTML(entry.coverImage || DEFAULT_PLACEHOLDER)}')"></div>
+    <div class="hero-scrim"></div>
+    <div class="hero-ghost">${escapeHTML(entry.location || "")}</div>
+    <div class="hero-ribbon"></div>
+    <span class="star tl"></span>
+    <span class="star bl"></span>
+
+    <div class="hero-content">
+      <span class="hero-tag">${year} EDITION</span>
+      <h2 class="hero-title">${escapeHTML(entry.title || "Untitled")}</h2>
+      <p class="hero-location">${escapeHTML(entry.location || "IIEST Shibpur")}</p>
+      <p class="hero-desc">${escapeHTML(entry.description || "")}</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="num">${displayedAwardCount}</div>
+          <div class="lbl">AWARDS GIVEN</div>
+        </div>
+        <div class="stat">
+          <div class="num">${DATE_FMT.format(new Date(entry.eventDate)).split(" ")[1] || ""}</div>
+          <div class="lbl">${year}</div>
+        </div>
+      </div>
+      <div class="hero-inset"><img referrerpolicy="no-referrer" src="${escapeHTML(insetImg)}" alt="Featured Awardee"></div>
+    </div>
+
+    <div class="hero-strip">
+      ${strip.map((src, i) => `
+        <div class="frame">
+          <img referrerpolicy="no-referrer" src="${escapeHTML(src)}" alt="Event Snapshot">
+          <span class="fnum">▶ ${10+i}</span>
+        </div>`).join("")}
+    </div>
+  </article>`;
+}
+document.addEventListener("DOMContentLoaded", load);
+</script>
+</body>
+</html>
