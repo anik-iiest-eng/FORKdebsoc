@@ -306,7 +306,9 @@
 <script>
 const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
   ? "http://localhost:5000/api"
-  : "/api";
+  : "https://forkdebsoc.onrender.com/api";
+// For Vercel deployment with same-origin API routing:
+// const API_BASE = "/api";
 const API_URL = `${API_BASE}/history`;
 const DEFAULT_PLACEHOLDER = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1400&q=80";
 

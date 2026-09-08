@@ -15,8 +15,15 @@
               <li><a href="index.html">Home</a></li>
               <li><a href="aboutus.html">About Us</a></li>
               <li><a href="events.html">Events</a></li>
+              <li><a href="becon.html">BECON #1.0</a></li>
               <li><a href="gallery.html">Gallery</a></li>
+              <li><a href="history.html">History</a></li>
               <li><a href="tribunal.html">Tribunal</a></li>
+              <li><a href="teampage.html">Team</a></li>
+              <li><a href="winners.html">Winners</a></li>
+              <li><a href="viewcommittee.html">Committees</a></li>
+              <li><a href="debsoc_iiest_timeline_with_photos.html">Timeline</a></li>
+              <li><a href="register.html">Register</a></li>
               <li><a href="contactpage.html">Contact</a></li>
             </ul>
           </nav>
