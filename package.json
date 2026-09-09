@@ -7,11 +7,12 @@
   "scripts": {
     "start": "npm run prisma:migrate && node server.js",
     "dev": "nodemon server.js",
-    "prisma:generate": "prisma generate --schema=backend/prisma/schema.prisma",
-    "prisma:migrate": "prisma migrate deploy --schema=backend/prisma/schema.prisma"
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
-    "@prisma/client": "^6.15.0",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "bcrypt": "^5.1.1",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
@@ -24,9 +25,10 @@
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^10.0.1",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
-    "prisma": "^6.15.0"
+    "prisma": "^7.10.0"
   }
 }

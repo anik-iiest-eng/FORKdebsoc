@@ -1,8 +1,7 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/db.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // GET /api/history - Public endpoint for history page
 router.get('/history', async (req, res) => {
