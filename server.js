@@ -16,6 +16,14 @@ import userRoutes from './backend/src/routes/user.routes.js';
 
 dotenv.config();
 
+const requiredProductionEnv = ["DATABASE_URL", "JWT_SECRET", "EMAIL_USER", "EMAIL_PASS"];
+if (process.env.NODE_ENV === "production") {
+  const missing = requiredProductionEnv.filter((name) => !process.env[name]?.trim());
+  if (missing.length) {
+    throw new Error(`Missing required production environment variables: ${missing.join(", ")}`);
+  }
+}
+
 const app = express();
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || [
   "http://localhost:3000",

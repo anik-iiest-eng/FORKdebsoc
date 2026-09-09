@@ -1,16 +1,57 @@
+import 'dotenv/config';
 import express from 'express';
 import bcrypt from 'bcrypt';
 import { body } from 'express-validator';
-import NodemailerHelper from 'nodemailer-otp';
+import nodemailer from 'nodemailer';
 import prisma from '../config/db.js';
 import { createToken } from '../utils/token.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import { generateOtp, hashOtp, verifyOtpHash } from '../utils/otp.js';
 
 const router = express.Router();
-const helper = new NodemailerHelper(process.env.EMAIL_USER, process.env.EMAIL_PASS);
+
+const smtpPort = Number(process.env.SMTP_PORT || 465);
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: smtpPort,
+  secure: process.env.SMTP_SECURE === 'false' ? false : smtpPort === 465,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+const sendOtpEmail = async (recipient, otp) => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error('EMAIL_USER and EMAIL_PASS must be configured');
+  }
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    to: recipient,
+    subject: 'DebSoc Account Verification',
+    text: `Your DebSoc verification code is ${otp}. It expires in 5 minutes.`
+  });
+};
 
 const OTP_TTL_MS = 5 * 60 * 1000;
+
+const cleanupExpiredPendingUsers = async () => {
+  try {
+    await prisma.user.deleteMany({
+      where: {
+        isVerified: false,
+        otps: { some: { expiresAt: { lt: new Date() } } }
+      }
+    });
+  } catch (error) {
+    console.error('Pending user cleanup failed:', error);
+  }
+};
+
+const pendingUserCleanupTimer = setInterval(cleanupExpiredPendingUsers, 60 * 1000);
+pendingUserCleanupTimer.unref?.();
+void cleanupExpiredPendingUsers();
 
 const authCookieOptions = {
   httpOnly: true,
@@ -126,20 +167,15 @@ router.post('/register', [
       return record;
     });
 
-    // Send the email in the background — the SMTP round trip should not
-    // block the HTTP response the client is waiting on. The OTP row is
-    // already persisted, so a "resend" (re-POST /register) recovers cleanly
-    // if the send fails or is slow.
-    helper
-      .sendEmail(
-        normalizedEmail,
-        'DebSoc Account Verification',
-        'Your verification code is',
-        otp
-      )
-      .catch((err) => {
-        console.error(`OTP email dispatch failed for user ${user.id}:`, err);
+    try {
+      await sendOtpEmail(normalizedEmail, otp);
+    } catch (emailError) {
+      await prisma.user.delete({ where: { id: user.id } }).catch((cleanupError) => {
+        console.error(`Could not remove pending user ${user.id}:`, cleanupError);
       });
+      console.error(`OTP email dispatch failed for ${normalizedEmail}:`, emailError);
+      return res.status(503).json({ error: 'Verification email could not be sent. Please try again.' });
+    }
 
     return res.status(200).json({ message: 'OTP sent to your email.' });
   } catch (error) {
@@ -176,7 +212,7 @@ router.post('/verify-otp', [
     }
 
     if (Date.now() > otpRecord.expiresAt.getTime()) {
-      await prisma.otpVerification.deleteMany({ where: { userId: user.id } });
+      await prisma.user.delete({ where: { id: user.id } });
       return res.status(400).json({ error: 'OTP has expired. Please register again.' });
     }
 
