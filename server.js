@@ -7,6 +7,7 @@ import compression from "compression";
 import hpp from "hpp";
 import crypto from "crypto";
 import dotenv from "dotenv";
+import dns from "node:dns";
 import authRoutes from "./backend/src/routes/auth.routes.js";
 import eventRoutes from "./backend/src/routes/event.routes.js";
 import achievementRoutes from "./backend/src/routes/achievement.routes.js";
@@ -15,7 +16,7 @@ import publicRoutes from './backend/src/routes/public.routes.js';
 import userRoutes from './backend/src/routes/user.routes.js';
 
 dotenv.config();
-
+dns.setDefaultResultOrder("ipv4first");
 const requiredProductionEnv = ["DATABASE_URL", "JWT_SECRET", "EMAIL_USER", "EMAIL_PASS"];
 if (process.env.NODE_ENV === "production") {
   const missing = requiredProductionEnv.filter((name) => !process.env[name]?.trim());
