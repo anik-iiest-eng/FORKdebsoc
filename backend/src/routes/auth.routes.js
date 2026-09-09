@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import express from 'express';
 import bcrypt from 'bcrypt';
 import { body } from 'express-validator';
@@ -8,15 +8,20 @@ import { createToken } from '../utils/token.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import { generateOtp, hashOtp, verifyOtpHash } from '../utils/otp.js';
 
+dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || 'backend/.env' });
+dotenv.config();
+
 const router = express.Router();
 
-const smtpPort = Number(process.env.SMTP_PORT || 465);
+const smtpPort = Number(process.env.SMTP_PORT || 587);
+const smtpSecure = process.env.SMTP_SECURE === 'true' || smtpPort === 465;
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: smtpPort,
-  secure: process.env.SMTP_SECURE === 'false' ? false : smtpPort === 465,
+  secure: smtpSecure,
+  requireTLS: !smtpSecure,
   pool: true,
-  maxConnections: 5,
+  maxConnections: 3,
   maxMessages: 100,
   connectionTimeout: 10000,
   greetingTimeout: 10000,
@@ -28,26 +33,45 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOtpEmail = async (recipient, otp) => {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error('EMAIL_USER and EMAIL_PASS must be configured');
+  const sender = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !sender) {
+    throw new Error('EMAIL_USER, EMAIL_PASS, and EMAIL_FROM must be configured');
   }
 
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    from: sender,
     to: recipient,
     subject: 'DebSoc Account Verification',
-    text: `Your DebSoc verification code is ${otp}. It expires in 5 minutes.`
+    text: `Your DebSoc verification code is ${otp}. It expires in 5 minutes.`,
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.5;color:#202124;max-width:520px">
+        <h2 style="margin-bottom:8px">DebSoc Account Verification</h2>
+        <p>Your verification code is:</p>
+        <p style="font-size:30px;font-weight:700;letter-spacing:8px;margin:20px 0">${otp}</p>
+        <p>This code expires in 5 minutes. If you did not request it, you can ignore this email.</p>
+      </div>
+    `
   });
 };
 
-const dispatchOtpEmail = (recipient, otp, userId, otpCreatedAt) => {
-  void sendOtpEmail(recipient, otp)
-    .then(() => prisma.otpVerification.deleteMany({
-      where: { userId, createdAt: { lt: otpCreatedAt } }
-    }))
-    .catch((error) => {
-      console.error(`OTP email dispatch failed for ${recipient}:`, error);
-    });
+const dispatchOtpEmail = async (recipient, otp, userId, otpCreatedAt) => {
+  await sendOtpEmail(recipient, otp);
+  await prisma.otpVerification.deleteMany({
+    where: { userId, createdAt: { lt: otpCreatedAt } }
+  });
+};
+
+const getMailError = (error) => {
+  if (error?.code === 'EAUTH') {
+    return 'Email authentication failed. Use a Gmail App Password, not your normal password.';
+  }
+  if (error?.code === 'ECONNECTION' || error?.code === 'ETIMEDOUT') {
+    return 'The email service could not be reached. Please try again.';
+  }
+  if (error?.code === 'EENVELOPE') {
+    return 'The email address was rejected by the mail server.';
+  }
+  return 'Verification email could not be sent. Please try again.';
 };
 
 const OTP_TTL_MS = 5 * 60 * 1000;
@@ -184,7 +208,12 @@ router.post('/register', [
       return { user: record, otpRecord: newOtpRecord };
     });
 
-    dispatchOtpEmail(normalizedEmail, otp, user.id, otpRecord.createdAt);
+    try {
+      await dispatchOtpEmail(normalizedEmail, otp, user.id, otpRecord.createdAt);
+    } catch (emailError) {
+      console.error(`OTP email dispatch failed for ${normalizedEmail}:`, emailError);
+      return res.status(503).json({ error: getMailError(emailError) });
+    }
 
     return res.status(200).json({ message: 'OTP sent to your email.' });
   } catch (error) {
