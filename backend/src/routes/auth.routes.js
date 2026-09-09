@@ -15,6 +15,12 @@ const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: smtpPort,
   secure: process.env.SMTP_SECURE === 'false' ? false : smtpPort === 465,
+  pool: true,
+  maxConnections: 5,
+  maxMessages: 100,
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 15000,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
@@ -34,6 +40,16 @@ const sendOtpEmail = async (recipient, otp) => {
   });
 };
 
+const dispatchOtpEmail = (recipient, otp, userId, otpCreatedAt) => {
+  void sendOtpEmail(recipient, otp)
+    .then(() => prisma.otpVerification.deleteMany({
+      where: { userId, createdAt: { lt: otpCreatedAt } }
+    }))
+    .catch((error) => {
+      console.error(`OTP email dispatch failed for ${recipient}:`, error);
+    });
+};
+
 const OTP_TTL_MS = 5 * 60 * 1000;
 
 const cleanupExpiredPendingUsers = async () => {
@@ -41,7 +57,10 @@ const cleanupExpiredPendingUsers = async () => {
     await prisma.user.deleteMany({
       where: {
         isVerified: false,
-        otps: { some: { expiresAt: { lt: new Date() } } }
+        otps: {
+          some: { expiresAt: { lt: new Date() } },
+          none: { expiresAt: { gte: new Date() } }
+        }
       }
     });
   } catch (error) {
@@ -142,7 +161,7 @@ router.post('/register', [
     const otpHash = hashOtp(otp);
     const expiresAt = new Date(Date.now() + OTP_TTL_MS);
 
-    const user = await prisma.$transaction(async (tx) => {
+    const { user, otpRecord } = await prisma.$transaction(async (tx) => {
       const record = existingUser
         ? await tx.user.update({
             where: { id: existingUser.id },
@@ -158,28 +177,21 @@ router.post('/register', [
             }
           });
 
-      // Drop any previous pending OTPs for this user before issuing a new one.
-      await tx.otpVerification.deleteMany({ where: { userId: record.id } });
-      await tx.otpVerification.create({
+      const newOtpRecord = await tx.otpVerification.create({
         data: { userId: record.id, otpHash, expiresAt }
       });
 
-      return record;
+      return { user: record, otpRecord: newOtpRecord };
     });
 
-    try {
-      await sendOtpEmail(normalizedEmail, otp);
-    } catch (emailError) {
-      await prisma.user.delete({ where: { id: user.id } }).catch((cleanupError) => {
-        console.error(`Could not remove pending user ${user.id}:`, cleanupError);
-      });
-      console.error(`OTP email dispatch failed for ${normalizedEmail}:`, emailError);
-      return res.status(503).json({ error: 'Verification email could not be sent. Please try again.' });
-    }
+    dispatchOtpEmail(normalizedEmail, otp, user.id, otpRecord.createdAt);
 
     return res.status(200).json({ message: 'OTP sent to your email.' });
   } catch (error) {
     console.error('Register error:', error);
+    if (error?.code === 'P2002') {
+      return res.status(409).json({ error: 'Username or email is already in use.' });
+    }
     return res.status(500).json({ error: 'Failed to dispatch verification email.' });
   }
 });
