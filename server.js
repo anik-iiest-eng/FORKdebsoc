@@ -17,7 +17,12 @@ import userRoutes from './backend/src/routes/user.routes.js';
 
 dotenv.config();
 dns.setDefaultResultOrder("ipv4first");
-const requiredProductionEnv = ["DATABASE_URL", "JWT_SECRET", "EMAIL_USER", "EMAIL_PASS"];
+const requiredProductionEnv = [
+  "DATABASE_URL",
+  "JWT_SECRET",
+  "RESEND_API_KEY",
+  "EMAIL_FROM"
+];
 if (process.env.NODE_ENV === "production") {
   const missing = requiredProductionEnv.filter((name) => !process.env[name]?.trim());
   if (missing.length) {

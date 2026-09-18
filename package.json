@@ -24,7 +24,6 @@
     "helmet": "^8.1.0",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^10.0.1",
     "nodemon": "^3.1.14",
     "pg": "^8.23.0"
   },
