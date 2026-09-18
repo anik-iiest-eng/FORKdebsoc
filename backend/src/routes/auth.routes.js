@@ -53,12 +53,10 @@ const sendOtpEmail = async (recipient, otp) => {
 
   return data;
 };
-const dispatchOtpEmail = async (recipient, otp, userId, otpCreatedAt) => {
-  await sendOtpEmail(recipient, otp);
-  await prisma.otpVerification.deleteMany({
-    where: { userId, createdAt: { lt: otpCreatedAt } }
-  });
+const dispatchOtpEmail = async (recipient, otp) => {
+  return await sendOtpEmail(recipient, otp);
 };
+
 
 const getMailError = (error) => {
   console.error('Email error:', error);
@@ -158,17 +156,40 @@ router.post('/register', [
     const trimmedDisplayName = String(displayName).trim();
 
     const existingUser = await prisma.user.findFirst({
-      where: { OR: [{ email: normalizedEmail }, { username: trimmedUsername }] }
+      where: {
+        OR: [
+          { email: normalizedEmail },
+          { username: trimmedUsername }
+        ]
+      }
     });
 
+    // Existing account
     if (existingUser) {
+      // Fully registered account
       if (existingUser.isVerified) {
         return res.status(400).json({ error: 'User already exists.' });
       }
-      // Same email AND username as a pending, unverified signup -> treat this
-      // as a resend instead of blocking the user who never got their email.
-      if (existingUser.email !== normalizedEmail || existingUser.username !== trimmedUsername) {
-        return res.status(400).json({ error: 'Username or email is already pending verification.' });
+
+      // Pending account:
+      // allow the user to register again with the same email.
+      // But don't allow them to steal/change an already-pending username.
+      if (
+        existingUser.email !== normalizedEmail &&
+        existingUser.username === trimmedUsername
+      ) {
+        return res.status(400).json({
+          error: 'Username is already pending verification.'
+        });
+      }
+
+      if (
+        existingUser.email === normalizedEmail &&
+        existingUser.username !== trimmedUsername
+      ) {
+        return res.status(400).json({
+          error: 'An account with this email is already pending verification. Please use the same username or wait for it to expire.'
+        });
       }
     }
 
@@ -181,7 +202,10 @@ router.post('/register', [
       const record = existingUser
         ? await tx.user.update({
             where: { id: existingUser.id },
-            data: { displayName: trimmedDisplayName, passwordHash }
+            data: {
+              displayName: trimmedDisplayName,
+              passwordHash
+            }
           })
         : await tx.user.create({
             data: {
@@ -193,27 +217,67 @@ router.post('/register', [
             }
           });
 
-      const newOtpRecord = await tx.otpVerification.create({
-        data: { userId: record.id, otpHash, expiresAt }
+      // Remove previous OTPs first
+      await tx.otpVerification.deleteMany({
+        where: { userId: record.id }
       });
 
-      return { user: record, otpRecord: newOtpRecord };
+      const newOtpRecord = await tx.otpVerification.create({
+        data: {
+          userId: record.id,
+          otpHash,
+          expiresAt
+        }
+      });
+
+      return {
+        user: record,
+        otpRecord: newOtpRecord
+      };
     });
 
     try {
-      await dispatchOtpEmail(normalizedEmail, otp, user.id, otpRecord.createdAt);
+      await sendOtpEmail(normalizedEmail, otp);
     } catch (emailError) {
-      console.error(`OTP email dispatch failed for ${normalizedEmail}:`, emailError);
-      return res.status(503).json({ error: getMailError(emailError) });
+      console.error(
+        `OTP email dispatch failed for ${normalizedEmail}:`,
+        emailError
+      );
+
+      // IMPORTANT:
+      // Email failed, so remove the temporary account and its OTP.
+      if (!user.isVerified) {
+        await prisma.$transaction([
+          prisma.otpVerification.deleteMany({
+            where: { userId: user.id }
+          }),
+          prisma.user.delete({
+            where: { id: user.id }
+          })
+        ]);
+      }
+
+      return res.status(503).json({
+        error: getMailError(emailError)
+      });
     }
 
-    return res.status(200).json({ message: 'OTP sent to your email.' });
+    return res.status(200).json({
+      message: 'OTP sent to your email.'
+    });
+
   } catch (error) {
     console.error('Register error:', error);
+
     if (error?.code === 'P2002') {
-      return res.status(409).json({ error: 'Username or email is already in use.' });
+      return res.status(409).json({
+        error: 'Username or email is already in use.'
+      });
     }
-    return res.status(500).json({ error: 'Failed to dispatch verification email.' });
+
+    return res.status(500).json({
+      error: 'Failed to dispatch verification email.'
+    });
   }
 });
 
