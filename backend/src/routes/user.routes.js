@@ -1,11 +1,49 @@
 import express from "express";
+import multer from "multer";
 import { body } from "express-validator";
 import prisma from "../config/db.js";
+import cloudinary from "../config/cloudinary.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
-
 const router = express.Router();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
 
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(
+        new Error("Only JPEG, PNG, and WebP images are allowed.")
+      );
+    }
+
+    cb(null, true);
+  }
+});
+
+const uploadBufferToCloudinary = (buffer, options = {}) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      options,
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(result);
+      }
+    );
+
+    stream.end(buffer);
+  });
+};
 router.patch("/me/profile", verifyToken, [
 	body("displayName").optional().isString().trim().isLength({ min: 2, max: 100 }),
 	body("bio").optional({ nullable: true }).isString().isLength({ max: 2000 }),
@@ -48,6 +86,95 @@ router.patch("/me/profile", verifyToken, [
 		return res.status(500).json({ error: "Failed to update profile." });
 	}
 });
+router.post(
+  "/me/banner-image",
+  verifyToken,
+  (req, res, next) => {
+    upload.single("bannerImage")(req, res, (error) => {
+      if (!error) {
+        return next();
+      }
+
+      if (
+        error instanceof multer.MulterError &&
+        error.code === "LIMIT_FILE_SIZE"
+      ) {
+        return res.status(413).json({
+          error: "Banner image must be 5MB or smaller."
+        });
+      }
+
+      return res.status(400).json({
+        error: error.message || "Invalid image upload."
+      });
+    });
+  },
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          error: "Banner image is required."
+        });
+      }
+
+      const result = await uploadBufferToCloudinary(
+        req.file.buffer,
+        {
+          folder: "debsoc/banner-images",
+          public_id: req.user.id,
+          overwrite: true,
+          invalidate: true,
+          resource_type: "image",
+          transformation: [
+            {
+              width: 1600,
+              height: 500,
+              crop: "fill",
+              gravity: "auto"
+            },
+            {
+              quality: "auto",
+              fetch_format: "auto"
+            }
+          ]
+        }
+      );
+
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: req.user.id
+        },
+        data: {
+          bannerImage: result.secure_url
+        },
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          email: true,
+          profileImage: true,
+          bannerImage: true,
+          spotifyLink: true,
+          socialLinks: true,
+          bio: true,
+          selectedStyle: true,
+          role: true
+        }
+      });
+
+      return res.json({
+        message: "Banner image uploaded successfully.",
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error("Banner image upload error:", error);
+
+      return res.status(500).json({
+        error: "Failed to upload banner image."
+      });
+    }
+  }
+);
 
 router.get("/:username", async (req, res) => {
 	try {
@@ -89,5 +216,95 @@ router.get("/:username", async (req, res) => {
 		res.status(500).json({ error: "Failed to load profile." });
 	}
 });
+
+router.post(
+  "/me/profile-image",
+  verifyToken,
+  (req, res, next) => {
+    upload.single("profileImage")(req, res, (error) => {
+      if (!error) {
+        return next();
+      }
+
+      if (
+        error instanceof multer.MulterError &&
+        error.code === "LIMIT_FILE_SIZE"
+      ) {
+        return res.status(413).json({
+          error: "Profile image must be 5MB or smaller."
+        });
+      }
+
+      return res.status(400).json({
+        error: error.message || "Invalid image upload."
+      });
+    });
+  },
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          error: "Profile image is required."
+        });
+      }
+
+      const result = await uploadBufferToCloudinary(
+        req.file.buffer,
+        {
+          folder: "debsoc/profile-images",
+          public_id: req.user.id,
+          overwrite: true,
+          invalidate: true,
+          resource_type: "image",
+          transformation: [
+            {
+              width: 500,
+              height: 500,
+              crop: "fill",
+              gravity: "auto"
+            },
+            {
+              quality: "auto",
+              fetch_format: "auto"
+            }
+          ]
+        }
+      );
+
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: req.user.id
+        },
+        data: {
+          profileImage: result.secure_url
+        },
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          email: true,
+          profileImage: true,
+          bannerImage: true,
+          spotifyLink: true,
+          socialLinks: true,
+          bio: true,
+          selectedStyle: true,
+          role: true
+        }
+      });
+
+      return res.json({
+        message: "Profile image uploaded successfully.",
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error("Profile image upload error:", error);
+
+      return res.status(500).json({
+        error: "Failed to upload profile image."
+      });
+    }
+  }
+);
 
 export default router;

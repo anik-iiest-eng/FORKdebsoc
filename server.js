@@ -96,6 +96,7 @@ app.use(rateLimit({
   message: { error: "Too many requests, please try again later." }
 }));
 
+
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
@@ -135,6 +136,7 @@ app.use((req, res, next) => {
 
   next();
 });
+
 
 // Routes
 app.use('/api/admin', adminRoutes);

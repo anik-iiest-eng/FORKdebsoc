@@ -1,271 +1,419 @@
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — DebSoc IIEST</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" href="../favicon.ico" type="image/x-icon">
   <style>
-    .font-serif-title { font-family: 'Playfair Display', serif; }
-    .font-sans-body { font-family: 'Montserrat', sans-serif; }
-    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+    :root{
+      --black:#151515; --panel:#191919; --inset:#101010;
+      --cream:#f1efe8; --muted:rgba(241,239,232,.62); --faint:rgba(241,239,232,.4);
+      --line:rgba(241,239,232,.14); --blue:#7ea8cb; --blue-deep:#4f7ba5;
+      --danger:#e39a9a; --ok:#9cc9a6;
+      --serif:Georgia,"Times New Roman",serif; --mono:"Courier New",monospace;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--black);color:var(--cream)}
+    body{margin:0;font-family:var(--serif);line-height:1.55;overflow-x:hidden;min-height:100vh;display:flex;flex-direction:column}
+    h1,h2,h3,h4,p{margin:0}
+    button,input,select,textarea{font:inherit;color:inherit}
+    .hidden,[hidden]{display:none!important}
+    .mono{font-family:var(--mono)}
+    .muted{color:var(--muted)}
+    :focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+    /* Top bar + tabs */
+    .bar{position:sticky;top:0;z-index:40;background:var(--black);border-bottom:1px solid var(--line)}
+    .bar-inner{max-width:1200px;margin:0 auto;padding:12px 20px 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:34px;width:auto}
+    .brand strong{font-size:1rem;letter-spacing:.02em}
+    .tag{font:700 10px var(--mono);background:var(--blue);color:#10202d;padding:2px 7px}
+    .bar-actions{display:flex;align-items:center;gap:14px;font:12px var(--mono)}
+    .bar-actions a{color:var(--muted);text-decoration:none}
+    .bar-actions a:hover{color:var(--cream)}
+    .tabs{max-width:1200px;margin:0 auto;padding:0 12px;display:flex;overflow-x:auto;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{background:none;border:0;border-bottom:2px solid transparent;padding:12px 14px 10px;cursor:pointer;color:var(--muted);font:14px var(--serif);white-space:nowrap}
+    .tab:hover{color:var(--cream)}
+    .tab[aria-selected="true"]{color:var(--cream);border-bottom-color:var(--blue)}
+
+    main{flex:1;width:100%;max-width:1200px;margin:0 auto;padding:clamp(24px,4vw,52px) 20px 64px}
+    footer{border-top:1px solid var(--line);padding:16px;text-align:center;font:11px var(--mono);color:var(--faint)}
+
+    /* Section head: title left, blurb + action right */
+    .head{border-top:2px solid var(--blue-deep);padding-top:16px;margin-bottom:24px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px 32px;align-items:end}
+    .head h2{font:400 clamp(1.7rem,3.6vw,2.6rem)/1.1 var(--serif)}
+    .head .side{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+    .head .side p{font-size:13px;color:var(--muted);max-width:44ch}
+    @media(max-width:760px){.head{grid-template-columns:1fr}}
+
+    /* Buttons & fields */
+    .btn{border:1px solid var(--line);background:transparent;padding:7px 14px;cursor:pointer;font:12px var(--mono);border-radius:2px;color:var(--cream);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+    .btn:hover{border-color:var(--blue)}
+    .btn.primary{background:var(--blue);border-color:var(--blue);color:#10202d;font-weight:700}
+    .btn.primary:hover{background:var(--blue-deep);border-color:var(--blue-deep)}
+    .btn.danger{color:var(--danger);border-color:rgba(227,154,154,.35)}
+    .btn.danger:hover{border-color:var(--danger)}
+    .btn.sm{padding:3px 9px;font-size:11px}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    label.lbl{display:block;font:11px var(--mono);color:var(--muted);margin-bottom:4px}
+    .in,input[type=text],input[type=url],input[type=number],input[type=datetime-local],select,textarea{width:100%;background:var(--inset);border:1px solid var(--line);border-radius:2px;padding:8px 10px;font-size:14px}
+    .in:focus,input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+    textarea{resize:vertical}
+    .hint{font:11px var(--mono);color:var(--faint);margin-top:4px}
+    .field{margin-bottom:14px}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+    @media(max-width:560px){.row2{grid-template-columns:1fr}}
+
+    /* Overview */
+    .stats{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:32px}
+    .stat{background:var(--panel);padding:18px}
+    .stat b{display:block;font:400 2rem/1.1 var(--serif)}
+    .stat.lead{grid-row:span 2;display:flex;flex-direction:column;justify-content:flex-end}
+    .stat.lead b{font-size:clamp(3rem,7vw,5rem)}
+    .stat span{font:11px var(--mono);color:var(--muted)}
+    @media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.stat.lead{grid-column:span 2;grid-row:auto}}
+    .cols{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px}
+    @media(max-width:860px){.cols{grid-template-columns:1fr}}
+    .block{margin-bottom:28px}
+    .block h3{font:700 1rem var(--serif);padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:4px}
+    .quick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+
+    /* Ledger rows (events, archives, codes) */
+    .ledger>.item{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+    .ledger>.item.nothumb{grid-template-columns:minmax(0,1fr) auto}
+    .thumb{width:64px;height:48px;object-fit:cover;background:var(--inset);border:1px solid var(--line);display:block}
+    .item .t{font-weight:700;overflow-wrap:anywhere}
+    .item .m{font:11px var(--mono);color:var(--muted);margin-top:2px}
+    .item .acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+    .pill{font:10px var(--mono);border:1px solid var(--line);padding:1px 6px;margin-right:6px;color:var(--muted)}
+    .pill.open{color:var(--ok);border-color:rgba(156,201,166,.4)}
+    .pill.blue{color:var(--blue);border-color:rgba(126,168,203,.4)}
+    .empty{padding:28px 0;color:var(--faint);font:13px var(--mono);border-bottom:1px dashed var(--line)}
+    @media(max-width:620px){
+      .ledger>.item,.ledger>.item.nothumb{grid-template-columns:56px minmax(0,1fr)}
+      .ledger>.item.nothumb{grid-template-columns:minmax(0,1fr)}
+      .item .acts{grid-column:1/-1;justify-content:flex-start}
+      .thumb{width:56px;height:42px}
+    }
+    .tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+    .tools input{flex:1;min-width:180px}.tools select{width:auto}
+
+    /* Editor + live preview (asymmetric 7/5) */
+    .editor{border:1px solid var(--line);background:var(--panel);padding:18px;margin-bottom:28px}
+    .editor-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+    .editor-head h3{font:700 1rem var(--serif);color:var(--blue)}
+    .editor-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:28px}
+    @media(max-width:900px){.editor-grid{grid-template-columns:1fr}}
+    .preview{border-left:1px solid var(--line);padding-left:24px;align-self:start;position:sticky;top:110px}
+    @media(max-width:900px){.preview{border-left:0;border-top:1px solid var(--line);padding:18px 0 0;position:static}}
+    .preview .cap{font:11px var(--mono);color:var(--faint);margin-bottom:8px}
+    .pv-cover{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--inset);border:1px solid var(--line);display:block;margin-bottom:12px}
+    .pv-cover.ph{display:grid;place-items:center;font:12px var(--mono);color:var(--faint)}
+    .pv h4{font:400 1.5rem/1.2 var(--serif);margin:6px 0 6px;overflow-wrap:anywhere}
+    .pv .meta{font:11px var(--mono);color:var(--muted);margin-bottom:12px}
+    .pv .warn{font:11px var(--mono);color:var(--danger);margin-bottom:10px}
+    .pv .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:12px}
+    .pv .strip img{width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--line)}
+
+    /* Rendered rich text */
+    .rt{font-size:14px;color:rgba(241,239,232,.85)}
+    .rt p,.rt ul,.rt blockquote{margin:0 0 .8em}
+    .rt h4{font:700 1.05rem var(--serif);margin:1em 0 .4em;color:var(--cream)}
+    .rt ul{padding-left:1.2em}.rt a{color:var(--blue)}
+    .rt blockquote{border-left:2px solid var(--blue-deep);padding-left:12px;color:var(--muted);font-style:italic}
+    .rt-empty{color:var(--faint);font:12px var(--mono)}
+
+    /* Rich text editor */
+    .rte{border:1px solid var(--line);background:var(--inset);border-radius:2px}
+    .rte-bar{display:flex;flex-wrap:wrap;gap:2px;padding:4px;border-bottom:1px solid var(--line)}
+    .rte-bar button{background:none;border:1px solid transparent;color:var(--muted);padding:3px 9px;cursor:pointer;font:13px var(--serif);border-radius:2px}
+    .rte-bar button:hover,.rte-bar button[aria-pressed="true"]{color:var(--cream);border-color:var(--line)}
+    .rte-bar .sp{flex:1}
+    .rte textarea{border:0;box-shadow:none!important;background:transparent;min-height:150px;display:block}
+    .rte-view{padding:10px;min-height:150px}
+
+    /* Image field */
+    .dz{border:1px dashed rgba(241,239,232,.3);padding:14px;text-align:center;font:12px var(--mono);color:var(--muted);cursor:pointer;background:var(--inset)}
+    .dz:hover,.dz.over{border-color:var(--blue);color:var(--cream)}
+    .dz.busy{opacity:.6;pointer-events:none}
+    .dz.big{padding:34px 14px;font-size:13px}
+    .imgtools{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;align-items:center}
+    .imgtools input{flex:1;min-width:140px;padding:5px 8px;font-size:12px}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-top:8px}
+    .th{position:relative;border:1px solid var(--line);background:var(--inset)}
+    .th.drag{opacity:.4}.th.target{border-color:var(--blue)}
+    .th img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;cursor:grab}
+    .th .ix{position:absolute;top:3px;left:3px;background:var(--black);font:10px var(--mono);padding:0 5px;border:1px solid var(--line)}
+    .th .ctl{display:flex;justify-content:space-between;border-top:1px solid var(--line)}
+    .th .ctl button{flex:1;background:none;border:0;padding:4px 0;cursor:pointer;color:var(--muted);font:12px var(--mono)}
+    .th .ctl button:hover:not(:disabled){color:var(--cream);background:rgba(126,168,203,.1)}
+    .th .ctl button:disabled{opacity:.25;cursor:default}
+    .th .ctl .rm:hover:not(:disabled){color:var(--danger)}
+
+    /* Awards */
+    .split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px}
+    @media(max-width:900px){.split{grid-template-columns:1fr}}
+    .card{border:1px solid var(--line);background:var(--panel);padding:18px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;background:var(--inset);border:1px solid var(--line);padding:6px;border-radius:2px;min-height:42px}
+    .chips:focus-within{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(126,168,203,.4);color:var(--blue);padding:1px 4px 1px 8px;font:12px var(--mono)}
+    .chip button{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px}
+    .chips input{flex:1;min-width:120px;border:0;background:transparent;padding:4px;box-shadow:none!important}
+    .presets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px}
+    .code{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+    .code code{font:700 13px var(--mono);letter-spacing:.08em;color:var(--blue);border:1px solid rgba(126,168,203,.3);padding:2px 8px}
+    .sumline{display:flex;gap:22px;flex-wrap:wrap;font:12px var(--mono);color:var(--muted);margin-bottom:10px}
+    .sumline b{color:var(--cream);font-size:15px}
+
+    /* Media grid */
+    .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:20px}
+    .mi{border:1px solid var(--line);background:var(--panel)}
+    .mi img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+    .mi .info{padding:6px 8px;font:10px var(--mono);color:var(--muted)}
+    .mi .acts{display:flex;border-top:1px solid var(--line)}
+    .mi .acts button{flex:1;background:none;border:0;padding:6px 0;cursor:pointer;font:11px var(--mono);color:var(--muted)}
+    .mi .acts button+button{border-left:1px solid var(--line)}
+    .mi .acts button:hover{color:var(--cream);background:rgba(126,168,203,.1)}
+    .mi .acts .del:hover{color:var(--danger)}
+    .mi.pick{cursor:pointer}.mi.sel{outline:2px solid var(--blue)}
+
+    /* Picker dialog */
+    dialog{background:var(--panel);color:var(--cream);border:1px solid var(--line);padding:0;width:min(880px,94vw);max-height:88vh}
+    dialog::backdrop{background:rgba(0,0,0,.7)}
+    .dlg{display:flex;flex-direction:column;max-height:88vh}
+    .dlg header,.dlg footer{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--panel);text-align:left;font:12px var(--mono);color:var(--muted)}
+    .dlg header{border-bottom:1px solid var(--line)}.dlg footer{border-top:1px solid var(--line)}
+    .dlg .body{padding:0 16px 16px;overflow:auto}
+
+    /* Toast */
+    #toast{position:fixed;right:20px;bottom:20px;z-index:80;padding:10px 16px;font:12px var(--mono);border:1px solid;max-width:min(420px,90vw)}
+    #toast.ok{background:#0f1f16;border-color:#3f7a55;color:#bfe3cb}
+    #toast.err{background:#2a1214;border-color:#8a3a40;color:#f0c4c4}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
   </style>
 </head>
-<body class="h-full overflow-auto bg-[#0B0C10] font-sans-body text-[#FAF7F2] flex flex-col justify-between selection:bg-[#DAA520] selection:text-[#800020]">
+<body>
+  <div id="toast" class="hidden" role="status" aria-live="polite"></div>
 
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden px-5 py-3 rounded-lg text-xs font-mono-code shadow-2xl border transition-all duration-300"></div>
-
-  <!-- Navigation Bar -->
-  <nav class="w-full px-4 md:px-8 py-3.5 sticky top-0 z-50 backdrop-blur-md border-b border-[#DAA520]/20" 
-       style="background: linear-gradient(135deg, rgba(128, 0, 32, 0.98) 0%, rgba(60, 0, 15, 0.98) 100%);">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img src="../debsoclogo.webp" alt="Logo" class="h-9 w-auto object-contain">
-        <span class="font-serif-title text-base font-bold tracking-wide uppercase">DebSoc Control Deck</span>
-        <span class="text-[10px] font-mono-code bg-[#DAA520] text-[#800020] px-2 py-0.5 rounded font-bold uppercase tracking-wider">ADMIN</span>
+  <header class="bar">
+    <div class="bar-inner">
+      <div class="brand">
+        <img src="../debsoclogo.webp" alt="DebSoc logo">
+        <strong>DebSoc Control Deck</strong>
+        <span class="tag">ADMIN</span>
       </div>
-
-      <div class="flex items-center gap-4">
-        <a href="../events.html" class="text-xs text-white/80 hover:text-white transition font-mono-code">Public Circuit ↗</a>
-        <button id="admin-logout-btn" class="text-xs font-mono-code px-3 py-1.5 rounded border border-white/20 hover:bg-white/10 text-white transition">
-          Exit Deck
-        </button>
+      <div class="bar-actions">
+        <a href="../events.html">Public circuit ↗</a>
+        <button id="admin-logout-btn" class="btn sm">Exit deck</button>
       </div>
     </div>
-  </nav>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Dashboard sections">
+      <button class="tab" role="tab" data-tab="overview">Overview</button>
+      <button class="tab" role="tab" data-tab="events">Events</button>
+      <button class="tab" role="tab" data-tab="archives">Archives</button>
+      <button class="tab" role="tab" data-tab="awards">Awards</button>
+      <button class="tab" role="tab" data-tab="media">Media</button>
+    </nav>
+  </header>
 
-  <!-- Main Container -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
-    
-    <!-- Section 1: Tournament Creator & Manager -->
-    <section class="space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-800">
+  <main>
+    <!-- OVERVIEW -->
+    <section data-panel="overview">
+      <div class="head">
+        <h2>Overview</h2>
+        <div class="side"><p>Live counts from the events, archive, award and media APIs.</p></div>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="quick">
+        <button class="btn primary" data-action="new-event">New event</button>
+        <button class="btn" data-action="new-archive">New archive</button>
+        <button class="btn" data-goto="awards">Mint award codes</button>
+        <button class="btn" data-goto="media">Upload media</button>
+      </div>
+      <div class="cols">
         <div>
-          <h2 class="text-2xl font-bold font-serif-title text-white">Tournaments & Debates</h2>
-          <p class="text-xs text-neutral-400 font-mono-code mt-1">Publish new events or update active debate schedules</p>
+          <div class="block"><h3>Registration closing next</h3><div class="ledger" id="ov-closing"></div></div>
+          <div class="block"><h3>Latest archives</h3><div class="ledger" id="ov-archives"></div></div>
         </div>
-        <button id="toggle-event-form-btn" class="text-xs font-semibold px-4 py-2 rounded-lg bg-[#DAA520] hover:bg-[#c49219] text-[#800020] transition active:scale-95 self-start">
-          + Add New Event
-        </button>
+        <div>
+          <div class="block"><h3>Codes waiting to be claimed</h3><div class="ledger" id="ov-pending"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section data-panel="events" hidden>
+      <div class="head">
+        <h2>Events</h2>
+        <div class="side">
+          <p>Publish new events or update active debate schedules. Archive an event once it is over.</p>
+          <button id="toggle-event-form-btn" class="btn primary">New event</button>
+        </div>
       </div>
 
-      <!-- Collapsible Create/Edit Form -->
-      <form id="event-editor-form" class="hidden border border-neutral-800 bg-[#12141a] p-6 rounded-xl space-y-4 shadow-xl">
+      <form id="event-editor-form" class="editor hidden" novalidate>
         <input type="hidden" id="event-edit-id" value="">
-        <div class="flex justify-between items-center pb-2 border-b border-neutral-800/80">
-          <h3 id="form-heading" class="text-sm font-bold font-serif-title text-[#DAA520]">Create New Tournament</h3>
-          <button type="button" id="close-event-form-btn" class="text-xs text-neutral-400 hover:text-white">✕ Cancel</button>
+        <div class="editor-head">
+          <h3 id="form-heading">Create new event</h3>
+          <button type="button" id="close-event-form-btn" class="btn sm">Cancel</button>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="md:col-span-2">
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Event Title</label>
-            <input type="text" id="ev-title" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="e.g. Freshers Parliamentary Debate 2026">
-          </div>
-          <div class="md:col-span-2">
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Description / Format</label>
-            <textarea id="ev-description" required rows="3" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="Asian Parliamentary, 3v3 format, open to all first-year scholars..."></textarea>
-          </div>
+        <div class="editor-grid">
           <div>
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Event Date & Time</label>
-            <input type="datetime-local" id="ev-date" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]">
+            <div class="field"><label class="lbl" for="ev-title">Title</label>
+              <input type="text" id="ev-title" placeholder="e.g. Freshers Parliamentary Debate 2026"></div>
+            <div class="row2">
+              <div class="field"><label class="lbl" for="ev-type">Type</label>
+                <select id="ev-type"><option value="MAIN">MAIN</option><option value="OTHERS">OTHERS</option></select></div>
+              <div class="field"><label class="lbl" for="ev-location">Venue</label>
+                <input type="text" id="ev-location" placeholder="e.g. Alumni Hall / Google Meet"></div>
+              <div class="field"><label class="lbl" for="ev-date">Event date and time</label>
+                <input type="datetime-local" id="ev-date"></div>
+              <div class="field"><label class="lbl" for="ev-deadline">Registration deadline</label>
+                <input type="datetime-local" id="ev-deadline"></div>
+            </div>
+            <div class="field"><span class="lbl">Cover image</span><div id="ev-cover"></div></div>
+            <div class="field"><span class="lbl">Description and format</span><div id="ev-rte"></div></div>
           </div>
-          <div>
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Registration Deadline</label>
-            <input type="datetime-local" id="ev-deadline" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]">
-          </div>
-          <div>
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Location / Venue</label>
-            <input type="text" id="ev-location" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="e.g. Alumni Hall / Google Meet">
-          </div>
-          <div>
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Cover Image URL</label>
-            <input type="url" id="ev-image" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="https://...">
-          </div>
+          <aside class="preview"><div class="cap">Live preview</div><div class="pv" id="ev-preview"></div></aside>
         </div>
-
-        <div class="flex justify-end gap-3 pt-2">
-          <button type="submit" id="save-event-btn" class="px-5 py-2 rounded text-xs font-semibold uppercase tracking-wider bg-[#DAA520] hover:bg-[#c49219] text-[#800020] transition">
-            Save Tournament
-          </button>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button type="submit" id="save-event-btn" class="btn primary">Save event</button>
         </div>
       </form>
 
-      <!-- Event Table Listing -->
-      <div class="border border-neutral-800 rounded-xl overflow-x-auto bg-[#12141a]">
-        <table class="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr class="border-b border-neutral-800 bg-[#161822] text-neutral-400 font-mono-code uppercase text-[10px]">
-              <th class="p-4">Tournament</th>
-              <th class="p-4">Date</th>
-              <th class="p-4">Deadline</th>
-              <th class="p-4">Venue</th>
-              <th class="p-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="events-table-body" class="divide-y divide-neutral-800/60">
-            <tr>
-              <td colspan="5" class="p-6 text-center text-neutral-500 font-mono-code">Loading events...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Section 2: Winner Redemption Code Generator -->
-    <section class="space-y-6">
-      <div class="pb-4 border-b border-neutral-800">
-        <h2 class="text-2xl font-bold font-serif-title text-white">Award Token Generator</h2>
-        <p class="text-xs text-neutral-400 font-mono-code mt-1">Mint cryptographically signed redemption codes for debate winners</p>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Minting Form -->
-        <div class="border border-neutral-800 bg-[#12141a] p-6 rounded-xl space-y-4">
-          <div>
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Select Tournament</label>
-            <select id="code-target-select" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]">
-              <option value="">-- Choose Event or Archive --</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Awards to Mint (Comma Separated)</label>
-            <textarea id="code-titles-input" rows="3" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="Winner, 1st Runner Up, Best Adjudicator, Best Novice Speaker"></textarea>
-            <p class="text-[10px] text-neutral-500 font-mono-code mt-1">One unique SHA-256 token will be minted per award title.</p>
-          </div>
-
-          <button id="mint-codes-btn" class="w-full py-2.5 rounded text-xs font-semibold uppercase tracking-wider bg-[#800020] hover:bg-[#66001a] border border-[#DAA520]/40 text-[#DAA520] transition">
-            Generate Secret Tokens
-          </button>
-        </div>
-
-        <!-- Generated Output Box -->
-        <div class="lg:col-span-2 border border-neutral-800 bg-[#12141a] p-6 rounded-xl flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="text-sm font-bold font-mono-code uppercase text-[#DAA520]">Issued Codes</h3>
-              <button id="copy-codes-btn" class="hidden text-xs font-mono-code text-neutral-400 hover:text-white px-2 py-1 rounded bg-[#181a22] border border-neutral-800">
-                Copy All
-              </button>
-            </div>
-            <p class="text-xs text-neutral-400 font-light mb-4">
-              Plaintext tokens are only displayed once upon generation. Copy and distribute them to the respective speakers.
-            </p>
-            <div id="codes-output-list" class="space-y-2 max-h-52 overflow-y-auto font-mono-code text-xs">
-              <div class="text-neutral-500 p-4 border border-dashed border-neutral-800 rounded text-center">
-                No tokens generated in this session.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- Section 3: History & Archive Management -->
-<section class="space-y-6">
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-800">
-    <div>
-      <h2 class="text-2xl font-bold font-serif-title text-white">History & Archives</h2>
-      <p class="text-xs text-neutral-400 font-mono-code mt-1">Directly log past tournaments or view archived records</p>
-    </div>
-    <button id="toggle-history-form-btn" class="text-xs font-semibold px-4 py-2 rounded-lg bg-[#DAA520] hover:bg-[#c49219] text-[#800020] transition active:scale-95 self-start">
-      + Add History Archive
-    </button>
-  </div>
-
-  <!-- History Create / Edit Form -->
-  <form id="history-editor-form" class="hidden border border-neutral-800 bg-[#12141a] p-6 rounded-xl space-y-4 shadow-xl">
-    <input type="hidden" id="hist-edit-id" value="">
-    <div class="flex justify-between items-center pb-2 border-b border-neutral-800/80">
-      <h3 id="hist-form-heading" class="text-sm font-bold font-serif-title text-[#DAA520]">Add Historical Archive</h3>
-      <button type="button" id="close-history-form-btn" class="text-xs text-neutral-400 hover:text-white">✕ Cancel</button>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Event Title</label>
-        <input type="text" id="hist-title" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="e.g. BECON 2025">
-      </div>
-      <div>
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Event Type</label>
-        <select id="hist-type" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]">
-          <option value="MAIN">MAIN</option>
-          <option value="OTHERS">OTHERS</option>
+      <div class="tools">
+        <input type="text" id="ev-search" placeholder="Search events" aria-label="Search events">
+        <select id="ev-filter" aria-label="Filter events">
+          <option value="all">All</option><option value="upcoming">Upcoming</option><option value="past">Past</option>
         </select>
       </div>
-      <div>
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Linked Event ID (Optional)</label>
-        <input type="text" id="hist-event-id" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="UUID of the source event">
-      </div>
-      <div class="md:col-span-2">
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Recap / Description</label>
-        <textarea id="hist-description" required rows="3" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="Flagship MUN, 3-day tournament concluded with over 200 delegates..."></textarea>
-      </div>
-      <div>
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Event Date</label>
-        <input type="datetime-local" id="hist-date" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]">
-      </div>
-      <div>
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Archived At</label>
-        <input type="datetime-local" id="hist-archived-at" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]">
-      </div>
-      <div>
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Number of Awards</label>
-        <input type="number" id="hist-award-count" min="0" max="500" step="1" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="e.g. 6">
-      </div>
-      <div>
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Location / Venue</label>
-        <input type="text" id="hist-location" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="e.g. Alumni Hall / Seminar Room 2">
-      </div>
-      <div class="md:col-span-2">
-        <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Cover Image URL</label>
-        <input type="url" id="hist-image" required class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="https://images.unsplash.com/cover.jpg">
-      </div>
-    </div>
+      <div class="ledger" id="events-list"></div>
+    </section>
 
-<div class="md:col-span-2">
-  <label class="block text-[11px] font-mono-code text-neutral-400 mb-1 uppercase">Gallery Images (Comma-Separated URLs for Strip & Reels)</label>
-  <textarea id="hist-gallery-images" rows="2" class="w-full bg-[#181a22] border border-neutral-800 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#DAA520]" placeholder="https://image1.jpg, https://image2.jpg, https://image3.jpg, https://image4.jpg"></textarea>
-  <p class="text-[10px] text-neutral-500 font-mono-code mt-1">Add up to 4 extra image links to feed the asymmetric layout cards and film reels.</p>
-</div>
+    <!-- ARCHIVES -->
+    <section data-panel="archives" hidden>
+      <div class="head">
+        <h2>Archives</h2>
+        <div class="side">
+          <p>Log past tournaments directly, or edit records created by archiving an event.</p>
+          <button id="toggle-history-form-btn" class="btn primary">New archive</button>
+        </div>
+      </div>
 
-    <div class="flex justify-end gap-3 pt-2">
-      <button type="submit" id="save-history-btn" class="px-5 py-2 rounded text-xs font-semibold uppercase tracking-wider bg-[#DAA520] hover:bg-[#c49219] text-[#800020] transition">
-        Save Archive Entry
-      </button>
-    </div>
-  </form>
+      <form id="history-editor-form" class="editor hidden" novalidate>
+        <input type="hidden" id="hist-edit-id" value="">
+        <div class="editor-head">
+          <h3 id="hist-form-heading">Add historical archive</h3>
+          <button type="button" id="close-history-form-btn" class="btn sm">Cancel</button>
+        </div>
+        <div class="editor-grid">
+          <div>
+            <div class="field"><label class="lbl" for="hist-title">Title</label>
+              <input type="text" id="hist-title" placeholder="e.g. BECON 2025"></div>
+            <div class="row2">
+              <div class="field"><label class="lbl" for="hist-type">Type</label>
+                <select id="hist-type"><option value="MAIN">MAIN</option><option value="OTHERS">OTHERS</option></select></div>
+              <div class="field"><label class="lbl" for="hist-location">Venue</label>
+                <input type="text" id="hist-location" placeholder="e.g. Alumni Hall / Seminar Room 2"></div>
+              <div class="field"><label class="lbl" for="hist-date">Event date</label>
+                <input type="datetime-local" id="hist-date"></div>
+              <div class="field"><label class="lbl" for="hist-archived-at">Archived at</label>
+                <input type="datetime-local" id="hist-archived-at"></div>
+              <div class="field"><label class="lbl" for="hist-award-count">Number of awards</label>
+                <input type="number" id="hist-award-count" min="0" max="500" step="1" placeholder="e.g. 6"></div>
+              <div class="field"><label class="lbl" for="hist-event-id">Linked active event (optional)</label>
+                <select id="hist-event-id"><option value="">None</option></select></div>
+            </div>
+            <div class="field"><span class="lbl">Cover image</span><div id="hist-cover"></div></div>
+            <div class="field"><span class="lbl">Gallery images</span><div id="hist-gallery"></div>
+              <p class="hint">Drag thumbnails or use the arrows to reorder. Order is saved as shown.</p></div>
+            <div class="field"><span class="lbl">Recap</span><div id="hist-rte"></div></div>
+          </div>
+          <aside class="preview"><div class="cap">Live preview</div><div class="pv" id="hist-preview"></div></aside>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button type="submit" id="save-history-btn" class="btn primary">Save archive entry</button>
+        </div>
+      </form>
 
-  <!-- History Table Listing -->
-  <div class="border border-neutral-800 rounded-xl overflow-x-auto bg-[#12141a]">
-    <table class="w-full text-left border-collapse text-xs">
-      <thead>
-        <tr class="border-b border-neutral-800 bg-[#161822] text-neutral-400 font-mono-code uppercase text-[10px]">
-          <th class="p-4">Archived Event</th>
-          <th class="p-4">Type</th>
-          <th class="p-4">Event Date</th>
-          <th class="p-4">Verified Awardees (Redeemed)</th>
-          <th class="p-4 text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="history-table-body" class="divide-y divide-neutral-800/60">
-        <tr>
-          <td colspan="5" class="p-6 text-center text-neutral-500 font-mono-code">Loading archives...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+      <div class="tools"><input type="text" id="hist-search" placeholder="Search archives" aria-label="Search archives"></div>
+      <div class="ledger" id="history-list"></div>
+    </section>
 
+    <!-- AWARDS -->
+    <section data-panel="awards" hidden>
+      <div class="head">
+        <h2>Awards</h2>
+        <div class="side"><p>Mint one single-use token per award. Plaintext tokens are shown once, so copy or download them before leaving this page.</p></div>
+      </div>
+      <div class="split">
+        <div>
+          <div class="card">
+            <div class="field"><label class="lbl" for="code-target-select">Event or archive</label>
+              <select id="code-target-select"><option value="">Choose event or archive</option></select></div>
+            <div class="field"><label class="lbl" for="code-title-input">Award titles</label>
+              <div class="chips" id="code-chips"><input type="text" id="code-title-input" placeholder="Type a title, press Enter"></div>
+              <div class="presets" id="code-presets">
+                <button type="button" class="btn sm" data-preset="Winner">+ Winner</button>
+                <button type="button" class="btn sm" data-preset="1st Runner Up">+ 1st Runner Up</button>
+                <button type="button" class="btn sm" data-preset="Best Adjudicator">+ Best Adjudicator</button>
+                <button type="button" class="btn sm" data-preset="Best Novice Speaker">+ Best Novice Speaker</button>
+              </div>
+            </div>
+            <button id="mint-codes-btn" class="btn primary" style="width:100%;justify-content:center">Generate secret tokens</button>
+          </div>
+          <div class="block" style="margin-top:24px">
+            <h3>Issued this session</h3>
+            <div style="display:flex;gap:6px;margin:8px 0">
+              <button id="copy-codes-btn" class="btn sm hidden">Copy all</button>
+              <button id="download-codes-btn" class="btn sm hidden">Download .txt</button>
+            </div>
+            <div id="codes-output-list"><div class="empty">No tokens generated in this session.</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="block">
+            <h3>All codes</h3>
+            <div class="sumline" id="codes-summary" style="margin-top:10px"></div>
+            <div class="tools">
+              <select id="codes-filter-target" aria-label="Filter by event or archive"><option value="">All events and archives</option></select>
+              <select id="codes-filter-status" aria-label="Filter by status">
+                <option value="all">Any status</option><option value="pending">Unclaimed</option><option value="redeemed">Claimed</option>
+              </select>
+            </div>
+            <div class="ledger" id="codes-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEDIA -->
+    <section data-panel="media" hidden>
+      <div class="head">
+        <h2>Media</h2>
+        <div class="side"><p id="media-count">Images uploaded through the dashboard. JPEG, PNG or WebP, up to 5&nbsp;MB each.</p></div>
+      </div>
+      <div class="dz big" id="media-dz" tabindex="0" role="button">Drop images here, or click to choose files</div>
+      <input type="file" id="media-file-input" accept="image/jpeg,image/png,image/webp" multiple hidden>
+      <div class="mgrid" id="media-grid"></div>
+      <div style="text-align:center;margin-top:20px"><button id="media-more" class="btn hidden">Load more</button></div>
+    </section>
   </main>
 
-  <footer class="border-t border-neutral-900 px-6 py-4 text-center text-[11px] font-mono-code text-neutral-600">
-    DebSoc IIEST Admin Console &copy; 2026
-  </footer>
+  <dialog id="picker">
+    <div class="dlg">
+      <header><span id="picker-count">Choose from media library</span>
+        <span><button type="button" class="btn sm" id="picker-cancel">Cancel</button>
+        <button type="button" class="btn sm primary" id="picker-use">Use selected</button></span></header>
+      <div class="body"><div class="mgrid" id="picker-grid"></div>
+        <div style="text-align:center;margin-top:16px"><button type="button" id="picker-more" class="btn hidden">Load more</button></div></div>
+    </div>
+  </dialog>
 
+  <footer>DebSoc IIEST Admin Console &copy; 2026</footer>
   <script src="admin.js"></script>
 </body>
 </html>

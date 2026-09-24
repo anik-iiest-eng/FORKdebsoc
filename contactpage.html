@@ -1,108 +1,444 @@
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact — Debating Society IIEST Shibpur</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="stylepro.css">
+
+  <style>
+    :root{
+      --black:#151515;
+      --cream:#f1efe8;
+      --blue:#7ea8cb;
+      --blue-deep:#4f7ba5;
+      --serif:"Forward Serif","Iowan Old Style","Baskerville","Times New Roman",serif;
+      --pixel: "Press","Courier New",monospace;
+    }
+
+    body{
+      background:var(--black);
+      color:var(--cream);
+      font-family:var(--serif);
+    }
+
+    .contact-page{
+      width:min(1260px,calc(100% - 40px));
+      margin:0 auto;
+    }
+
+    .contact-hero{
+      padding:34px 0 0;
+    }
+
+    .contact-grid{
+      display:grid;
+      grid-template-columns:40% 60%;
+      gap:28px;
+      align-items:start;
+    }
+
+    .contact-title-wrap{
+      padding:8vw 6% 0 0;
+    }
+
+    .contact-kicker{
+      margin:0 0 18px;
+      color:var(--blue);
+      font:10px/1.5 var(--pixel);
+      letter-spacing:.08em;
+    }
+
+    .contact-title{
+      margin:0;
+      font:400 clamp(42px,7vw,92px)/.9 var(--pixel);
+      color:#fff;
+      text-transform:uppercase;
+    }
+
+    .contact-title-line{
+      width:78%;
+      height:3px;
+      margin-top:24px;
+      background:var(--blue-deep);
+    }
+
+    .contact-lead{
+      max-width:34ch;
+      margin:24px 0 0;
+      font-size:clamp(17px,1.7vw,22px);
+      line-height:1.55;
+      font-style:italic;
+      color:rgba(241,239,232,.78);
+    }
+
+    .contact-map{
+      position:relative;
+      background:#0e0e0e;
+      border:1px solid rgba(126,168,203,.42);
+      padding:10px;
+    }
+
+    .contact-map::before{
+      content:"IIEST / SHIBPUR";
+      display:block;
+      padding:9px 12px;
+      margin-bottom:10px;
+      color:var(--blue);
+      font:10px var(--pixel);
+      letter-spacing:.08em;
+      border-bottom:1px solid rgba(241,239,232,.16);
+    }
+
+    .contact-map iframe{
+      display:block;
+      width:100%;
+      height:470px;
+      border:0;
+      filter:grayscale(1) contrast(1.08);
+    }
+
+    .contact-rule{
+      height:2px;
+      margin:38px 0 0;
+      background:var(--blue-deep);
+    }
+
+    .contact-section{
+      padding:56px 0 70px;
+    }
+
+    .contact-section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:28px;
+      margin-bottom:28px;
+    }
+
+    .contact-section-head h2{
+      margin:0;
+      font:400 clamp(30px,4vw,54px)/1 var(--pixel);
+      color:#fff;
+    }
+
+    .contact-section-head span{
+      color:rgba(241,239,232,.48);
+      font:10px var(--pixel);
+      letter-spacing:.08em;
+    }
+
+    .contact-details{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:64px;
+      align-items:start;
+    }
+
+    .contact-list{
+      border-top:1px solid rgba(241,239,232,.18);
+    }
+
+    .contact-row{
+      padding:20px 0;
+      border-bottom:1px solid rgba(241,239,232,.18);
+    }
+
+    .contact-row small{
+      display:block;
+      margin-bottom:7px;
+      color:var(--blue);
+      font:10px var(--pixel);
+      letter-spacing:.06em;
+    }
+
+    .contact-row a{
+      color:var(--cream);
+      text-decoration:none;
+      font-size:clamp(18px,1.9vw,25px);
+      line-height:1.35;
+    }
+
+    .contact-row a:hover{
+      color:var(--blue);
+    }
+
+    .contact-note{
+      padding-top:18px;
+      border-top:2px solid var(--blue-deep);
+    }
+
+    .contact-note h3{
+      margin:0 0 18px;
+      color:#fff;
+      font:italic 400 clamp(26px,3vw,38px)/1.1 var(--serif);
+    }
+
+    .contact-note p{
+      margin:0 0 18px;
+      max-width:38ch;
+      color:rgba(241,239,232,.68);
+      font-size:17px;
+      line-height:1.7;
+    }
+
+    .sponsor-section{
+      padding:0 0 74px;
+    }
+
+    .sponsor-block{
+      display:grid;
+      grid-template-columns:1fr 1.2fr;
+      gap:36px;
+      align-items:center;
+      padding:34px 0;
+      border-top:1px solid rgba(241,239,232,.16);
+      border-bottom:1px solid rgba(241,239,232,.16);
+    }
+
+    .sponsor-copy h2{
+      margin:0 0 12px;
+      color:#fff;
+      font:400 clamp(28px,3.6vw,48px)/1 var(--pixel);
+    }
+
+    .sponsor-copy p{
+      margin:0;
+      max-width:40ch;
+      color:rgba(241,239,232,.64);
+      font-size:16px;
+      line-height:1.65;
+    }
+
+    .sponsor-logo{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:190px;
+      background:var(--cream);
+      padding:28px;
+    }
+
+    .sponsor-logo img{
+      width:min(100%,420px);
+      height:auto;
+      object-fit:contain;
+    }
+
+    .contact-footer{
+      border-top:1px solid rgba(241,239,232,.12);
+      padding:38px 0 48px;
+    }
+
+    .contact-footer-inner{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .contact-footer img{
+      width:auto;
+      height:48px;
+      object-fit:contain;
+    }
+
+    .contact-footer p{
+      margin:0;
+      max-width:60ch;
+      color:rgba(241,239,232,.58);
+      font-size:15px;
+      line-height:1.65;
+    }
+
+    .contact-footer small{
+      flex-basis:100%;
+      color:rgba(241,239,232,.38);
+      font-size:11px;
+      letter-spacing:.04em;
+    }
+
+    @media(max-width:900px){
+      .contact-grid,
+      .contact-details,
+      .sponsor-block{
+        grid-template-columns:1fr;
+      }
+
+      .contact-title-wrap{
+        padding:20px 0 0;
+      }
+
+      .contact-map iframe{
+        height:360px;
+      }
+
+      .contact-details{
+        gap:36px;
+      }
+
+      .sponsor-logo{
+        min-height:150px;
+      }
+    }
+
+    @media(max-width:520px){
+      .contact-page{
+        width:min(100% - 28px,1260px);
+      }
+
+      .contact-title{
+        font-size:clamp(38px,14vw,68px);
+      }
+
+      .contact-map{
+        padding:7px;
+      }
+
+      .contact-map iframe{
+        height:300px;
+      }
+
+      .contact-section{
+        padding:42px 0 52px;
+      }
+    }
+  </style>
 </head>
-<body class="h-full font-body overflow-auto">
-<div class="w-full h-full pattern-bg">
 
-   <!-- NAV -->
+<body>
+  <div id="site-nav"></div>
 
+  <main class="contact-page">
 
+    <section class="contact-hero">
+      <div class="contact-grid">
 
+        <div class="contact-title-wrap">
+          <p class="contact-kicker">DEBSOC / IIEST SHIBPUR</p>
 
-  <!-- PAGE CONTENT -->
-  <section class="px-6 py-24 relative overflow-hidden" style="background:#fdf8e8;">
-    <img src="debsoclogo.jpeg" alt="Watermark" class="contact-watermark">
-    <div class="max-w-4xl mx-auto text-center relative z-10">
-      <h1 class="contact-heading font-display text-5xl text-[#800020] mb-20">Contact Us</h1>
-      <div class="space-y-12">
-        <div class="contact-row">
-  <h3>Location</h3>
-  <p>
-  <a 
-    href="https://www.google.com/maps?q=IIEST+Shibpur" 
-    target="_blank"
-    style="color:#800020; text-decoration: underline;"
-  >
-    IIEST Shibpur, Howrah, West Bengal
-  </a>
-</p>
+          <h1 class="contact-title">Contact</h1>
 
-  <div class="mt-6 flex justify-center">
-  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3684.6411261813587!2d88.30358927529997!3d22.55511237950408!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0279c91a8d2d49%3A0xc6ee508c74cf031d!2sIndian%20Institute%20of%20Engineering%20Science%20and%20Technology%2C%20Shibpur%20(IIEST)!5e0!3m2!1sen!2sin!4v1773846736497!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-</div>
-</div>
-<div class="contact-row">
-  <h3>Email</h3>
+          <div class="contact-title-line"></div>
 
-  <p>
-    <a href="mailto:debsoc.iiest@gmail.com?subject=Inquiry from DebSoc Website&body=Hello DebSoc Team,"
-       style="color:#800020;">
-       debsoc.iiest@gmail.com
-    </a>
-  </p>
-
-</div>
-        <div class="contact-row">
-          <h3>Instagram</h3>
-          <p><a href="https://www.instagram.com/debsoc_iiests" target="_blank" style="color:#800020;">@debsoc_iiests</a></p>
+          <p class="contact-lead">
+            Questions, collaborations, event enquiries, or simply trying to find the people
+            responsible for all these arguments.
+          </p>
         </div>
-        <div class="contact-row">
-          <h3>LinkedIn</h3>
-          <p><a href="https://www.linkedin.com/company/debsoc-iiest-shibpur/" target="_blank" style="color:#800020;">debsoc-iiest-shibpur</a></p>
+
+        <div class="contact-map">
+          <iframe
+            title="Map of IIEST Shibpur"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3684.6411261813587!2d88.30358927529997!3d22.55511237950408!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0279c91a8d2d49%3A0xc6ee508c74cf031d!2sIndian%20Institute%20of%20Engineering%20Science%20and%20Technology%2C%20Shibpur%20(IIEST)!5e0!3m2!1sen!2sin!4v1773846736497!5m2!1sen!2sin"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
         </div>
+
       </div>
-    </div>
-  </section>
 
-<!-- FOOTER -->
-  <footer class="px-6 py-12" style="background-color:#1a0008;">
-    <div class="max-w-6xl mx-auto">
-      <div class="grid md:grid-cols-4 gap-8 mb-8">
-        <div class="md:col-span-2">
-          <div class="flex items-center gap-3 mb-4">
-            <img src="debsoclogo.jpeg" alt="DEBSOC Logo" class="h-12 w-auto object-contain">
-            <span class="font-display font-bold text-lg footer-heading" style="color:#FAF7F2;">DebSoc<span class="dot-right"></span></span>
-          </div>
-          <p class="text-sm opacity-70 max-w-xs" style="color:#FAF7F2;">A community dedicated to the synthesis of technical precision and humanistic inquiry. Through debates and formal discourse, we equip the scholars with the cognitive agility to dissect multifaceted issues and defend truth through reasoned conviction.</p>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-4 footer-heading" style="color:#DAA520;">Quick Links<span class="dot-right"></span></h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="index.html"    class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Home</a></li>
-            <li><a href="events.html"      class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Events</a></li>
-            <li><a href="tribunal.html"    class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Tribunal</a></li>
-            <li><a href="contactpage.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Contact</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-4 footer-heading" style="color:#DAA520;">Connect<span class="dot-right"></span></h4>
-          <div class="flex gap-3">
-            <a href="https://www.instagram.com/debsoc_iiests" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all" style="background-color:rgba(218,165,32,0.2);">
-              <svg class="w-5 h-5" fill="#DAA520" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-            <a href="https://www.linkedin.com/company/debsoc-iiest-shibpur/" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all" style="background-color:rgba(218,165,32,0.2);">
-              <svg class="w-5 h-5" fill="#DAA520" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      <div class="contact-rule"></div>
+    </section>
+
+
+    <section class="contact-section">
+      <div class="contact-section-head">
+        <h2>Find us.</h2>
+        <span>CONTACT / 01</span>
+      </div>
+
+      <div class="contact-details">
+
+        <div class="contact-list">
+
+          <div class="contact-row">
+            <small>Location</small>
+            <a href="https://www.google.com/maps?q=IIEST+Shibpur" target="_blank" rel="noopener">
+              IIEST Shibpur, Howrah, West Bengal
             </a>
           </div>
+
+          <div class="contact-row">
+            <small>Email</small>
+            <a href="mailto:debsoc.iiest@gmail.com?subject=Inquiry%20from%20DebSoc%20Website">
+              debsoc.iiest@gmail.com
+            </a>
+          </div>
+
+          <div class="contact-row">
+            <small>Instagram</small>
+            <a href="https://www.instagram.com/debsoc_iiests" target="_blank" rel="noopener">
+              @debsoc_iiests
+            </a>
+          </div>
+
+          <div class="contact-row">
+            <small>LinkedIn</small>
+            <a href="https://www.linkedin.com/company/debsoc-iiest-shibpur/" target="_blank" rel="noopener">
+              debsoc-iiest-shibpur
+            </a>
+          </div>
+
         </div>
+
+        <div class="contact-note">
+          <h3>Come find the room where the arguments happen.</h3>
+          <p>
+            DebSoc is based at IIEST Shibpur. For collaborations, event enquiries,
+            institutional communication, or general questions, email is usually the
+            quickest route.
+          </p>
+          <p>
+            The society also maintains an active presence through its social channels,
+            where event announcements and updates are posted.
+          </p>
+        </div>
+
       </div>
-      <div class="pt-8 border-t text-center" style="border-color:rgba(218,165,32,0.2);">
-        <p class="text-sm opacity-60" style="color:#FAF7F2;">© 2025 The Debating Society. All rights reserved.</p>
+    </section>
+
+
+    <section class="sponsor-section">
+      <div class="sponsor-block">
+
+        <div class="sponsor-copy">
+          <h2>Past sponsors.</h2>
+          <p>
+            Support from organisations and partners helps the society run events,
+            conferences and public-facing initiatives throughout the academic year.
+          </p>
+        </div>
+
+        <div class="sponsor-logo">
+          <img src="doc/jamb.webp" alt="Jamboree">
+        </div>
+
       </div>
+    </section>
+
+  </main>
+
+
+  <footer class="contact-footer">
+    <div class="contact-page">
+
+      <div class="contact-footer-inner">
+        <img src="debsoclogo.jpeg" alt="DebSoc logo">
+
+        <p>
+          A community dedicated to the synthesis of technical precision and humanistic inquiry.
+          Through debates and formal discourse, we equip scholars with the cognitive agility
+          to dissect multifaceted issues and defend truth through reasoned conviction.
+        </p>
+
+        <small>© 2026 The Debating Society, IIEST Shibpur. All rights reserved.</small>
+      </div>
+
     </div>
   </footer>
 
-
-<script src="main.js"></script>
-
-<script src="footer.js"></script>
-<script src="nav.js"></script>
+  <script src="nav.js"></script>
 </body>
 </html>
