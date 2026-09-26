@@ -30,6 +30,7 @@ model User {
   comments      Comment[]
   registrations EventParticipant[]
   otps          OtpVerification[]
+  resetOtps     PasswordResetOtp[]
 
   @@map("users")
 }
@@ -43,6 +44,17 @@ model OtpVerification {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("otp_verifications")
+}
+
+model PasswordResetOtp {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  otpHash   String   @map("otp_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_otps")
 }
 
 model Event {

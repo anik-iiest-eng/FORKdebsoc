@@ -1,18 +1,16 @@
 (function () {
+const links = [
+  { label: 'Home', href: 'index.html' },
+  { label: 'About Us', href: 'aboutus.html' },
+  { label: 'Tribunal', href: 'new.html' },
+  { label: 'Team', href: 'teampage.html' },
+  { label: 'Contact', href: 'contactpage.html' }
+];
 
-  const links = [
-    { label: 'Home', href: 'index.html' },
-    { label: 'About Us', href: 'aboutus.html' },
-    { label: 'Gallery', href: 'gallery.html' },
-    { label: 'Tribunal', href: 'new.html' },
-    { label: 'Team', href: 'teampage.html' },
-    { label: 'Contact', href: 'contactpage.html' }
-  ];
-
-  const eventLinks = [
-    { label: 'Main Events', href: 'events.html' },
-    { label: 'BECON #1.0', href: 'becon.html' }
-  ];
+const eventLinks = [
+  { label: 'Main Events', href: 'events.html' },
+  { label: 'BECON', href: 'becon.html' }
+];
 
   const currentPage =
     window.location.pathname.split('/').pop() || 'index.html';
@@ -406,16 +404,6 @@
               </div>
 
             </div>
-
-            <a
-              class="site-nav-link"
-              href="gallery.html"
-              ${currentPage === 'gallery.html'
-                ? 'aria-current="page"'
-                : ''}
-            >
-              Gallery
-            </a>
 
             <a
               class="site-nav-link"
