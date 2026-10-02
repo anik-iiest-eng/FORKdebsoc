@@ -14,6 +14,7 @@ import achievementRoutes from "./backend/src/routes/achievement.routes.js";
 import adminRoutes from "./backend/src/routes/admin.routes.js";
 import publicRoutes from './backend/src/routes/public.routes.js';
 import userRoutes from './backend/src/routes/user.routes.js';
+import { crossSiteCookieOptions } from './backend/src/config/cookie-options.js';
 
 dotenv.config();
 dns.setDefaultResultOrder("ipv4first");
@@ -109,10 +110,8 @@ app.use("/api/auth/verify-otp", authLimiter);
 app.get("/api/csrf-token", (req, res) => {
   const token = crypto.randomBytes(32).toString("hex");
   res.cookie("csrf_token", token, {
+    ...crossSiteCookieOptions(req),
     httpOnly: false,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-    partitioned: process.env.NODE_ENV === "production",
     maxAge: 2 * 60 * 60 * 1000,
     path: "/"
   });

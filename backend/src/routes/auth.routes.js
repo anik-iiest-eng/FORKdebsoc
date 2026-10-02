@@ -7,6 +7,7 @@ import prisma from '../config/db.js';
 import { createToken } from '../utils/token.js';
 import { validate } from '../middlewares/validate.middleware.js';
 import { generateOtp, hashOtp, verifyOtpHash } from '../utils/otp.js';
+import { crossSiteCookieOptions } from '../config/cookie-options.js';
 
 dotenv.config({ path: process.env.DOTENV_CONFIG_PATH || 'backend/.env' });
 dotenv.config();
@@ -133,14 +134,12 @@ const pendingUserCleanupTimer = setInterval(cleanupExpiredPendingUsers, 60 * 100
 pendingUserCleanupTimer.unref?.();
 void cleanupExpiredPendingUsers();
 
-const authCookieOptions = {
+const authCookieOptions = (req) => ({
+  ...crossSiteCookieOptions(req),
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  partitioned: process.env.NODE_ENV === 'production',
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: '/'
-};
+});
 
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
@@ -169,7 +168,7 @@ router.post('/login', [
     }
 
     const token = createToken(user);
-    res.cookie('debsoc_token', token, authCookieOptions);
+    res.cookie('debsoc_token', token, authCookieOptions(req));
     return res.json({
       user: {
         id: user.id,
@@ -374,7 +373,7 @@ router.post('/verify-otp', [
     });
 
     const token = createToken(verifiedUser);
-    res.cookie('debsoc_token', token, authCookieOptions);
+    res.cookie('debsoc_token', token, authCookieOptions(req));
     return res.status(200).json({
       message: 'Account successfully verified!',
       user: {
@@ -511,14 +510,9 @@ router.post('/reset-password', [
 });
 
 router.post('/logout', (req, res) => {
-  const crossSiteCookieOptions = {
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    partitioned: process.env.NODE_ENV === 'production',
-    path: '/'
-  };
-  res.clearCookie('debsoc_token', { ...crossSiteCookieOptions, httpOnly: true });
-  res.clearCookie('csrf_token', { ...crossSiteCookieOptions, httpOnly: false });
+  const cookieOptions = { ...crossSiteCookieOptions(req), path: '/' };
+  res.clearCookie('debsoc_token', { ...cookieOptions, httpOnly: true });
+  res.clearCookie('csrf_token', { ...cookieOptions, httpOnly: false });
   return res.json({ message: 'Logged out successfully.' });
 });
 

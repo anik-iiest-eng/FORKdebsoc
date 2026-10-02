@@ -61,7 +61,7 @@ flowchart TD
 
 The UI may hide controls, but the backend middleware is the authority. Authenticated requests use the HttpOnly `debsoc_token` cookie; browser-readable bearer tokens are not accepted. Unsafe cookie-authenticated requests also require the CSRF token.
 
-In production, both the session and CSRF cookies are `Secure`, `SameSite=None`, and `Partitioned`. The partitioned attribute allows the GitHub Pages frontend to make credentialed requests to the Render API in browsers that partition or restrict third-party cookies. After deploying cookie-setting changes, users must sign in again so the browser receives the new partitioned session cookie. A same-site custom domain remains preferable for production.
+For HTTPS requests, both the session and CSRF cookies are `Secure`, `SameSite=None`, and `Partitioned`, including when the app's `NODE_ENV` is unset by its hosting provider. The options are selected from the request's HTTPS state / forwarded protocol so the GitHub Pages frontend can make credentialed requests to the Render API in browsers that partition or restrict third-party cookies. After deploying cookie-setting changes, users must sign in again so the browser receives the new partitioned session cookie. A same-site custom domain remains preferable for production.
 
 ## Route Guard Layout
 
