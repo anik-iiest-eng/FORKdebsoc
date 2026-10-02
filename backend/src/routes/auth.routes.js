@@ -137,6 +137,7 @@ const authCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  partitioned: process.env.NODE_ENV === 'production',
   maxAge: 7 * 24 * 60 * 60 * 1000,
   path: '/'
 };
@@ -510,8 +511,14 @@ router.post('/reset-password', [
 });
 
 router.post('/logout', (req, res) => {
-  res.clearCookie('debsoc_token', { path: '/' });
-  res.clearCookie('csrf_token', { path: '/' });
+  const crossSiteCookieOptions = {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    partitioned: process.env.NODE_ENV === 'production',
+    path: '/'
+  };
+  res.clearCookie('debsoc_token', { ...crossSiteCookieOptions, httpOnly: true });
+  res.clearCookie('csrf_token', { ...crossSiteCookieOptions, httpOnly: false });
   return res.json({ message: 'Logged out successfully.' });
 });
 
