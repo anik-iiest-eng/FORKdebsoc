@@ -340,6 +340,11 @@ const eventLinks = [
         })
         .join('');
 
+    const isEventsPage =
+      eventLinks.some(function (link) {
+        return link.href === currentPage;
+      });
+
 
     const markup = `
       <nav
@@ -371,13 +376,14 @@ const eventLinks = [
               About Us
             </a>
 
-            <div class="site-nav-events">
+            <div class="site-nav-events${isEventsPage ? ' is-current' : ''}">
 
               <button
                 class="site-nav-trigger"
                 type="button"
                 aria-expanded="false"
                 aria-controls="site-nav-events-menu"
+                ${isEventsPage ? 'aria-current="page"' : ''}
               >
                 Events
                 <span
@@ -614,6 +620,20 @@ const eventLinks = [
 
         }
 
+      }
+    );
+
+    document.addEventListener(
+      'keydown',
+      function (event) {
+        if (event.key !== 'Escape') return;
+
+        eventWrap.classList.remove('is-open');
+        eventButton.setAttribute('aria-expanded', 'false');
+        mobileMenu.classList.remove('is-open');
+        menuButton.classList.remove('is-open');
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.setAttribute('aria-label', 'Open navigation menu');
       }
     );
 
