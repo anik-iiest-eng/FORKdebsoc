@@ -142,8 +142,7 @@
 
   <script src="nav.js"></script>
   <script>
-    const API_BASE = ["localhost","127.0.0.1"].includes(location.hostname)
-      ? "http://localhost:5000/api" : "https://forkdebsoc.onrender.com/api";
+    const API_BASE = "https://forkdebsoc.onrender.com/api";
     const PH = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1400&q=80";
     const FMT = new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"long",year:"numeric"});
 
@@ -330,8 +329,7 @@
       feed.innerHTML = sorted.map((e,i)=>STYLES[i % STYLES.length](e, info(e,i))).join("");
     }
 
-    /* tries the local API first (when on localhost), then the deployed one */
-    const ENDPOINTS = [...new Set([`${API_BASE}/history`, "https://forkdebsoc.onrender.com/api/history"])];
+    const ENDPOINTS = [`${API_BASE}/history`];
 
     async function fetchHistory(){
       let lastErr;

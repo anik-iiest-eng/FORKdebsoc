@@ -15,11 +15,9 @@ const eventLinks = [
   const currentPage =
     window.location.pathname.split('/').pop() || 'index.html';
 
-  const API_BASE =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
-      ? "http://localhost:5000/api"
-      : "https://forkdebsoc.onrender.com/api";
+  localStorage.removeItem("debsoc_token");
+
+  const API_BASE = "https://forkdebsoc.onrender.com/api";
 
   let csrfToken;
 
@@ -39,20 +37,13 @@ const eventLinks = [
   /*
    * Same API helper used by the working page.
    *
-   * - Uses stored JWT for Authorization
-   * - Sends cookies
-   * - Fetches CSRF token automatically for POST/PATCH/DELETE etc.
+   * - Sends the HttpOnly session cookie
+   * - Fetches CSRF token for POST/PATCH/DELETE requests
    */
   async function apiFetch(url, options = {}) {
 
     const method = (options.method || "GET").toUpperCase();
     const headers = new Headers(options.headers || {});
-
-    const token = localStorage.getItem("debsoc_token");
-
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
 
     if (
       method !== "GET" &&
@@ -289,7 +280,6 @@ const eventLinks = [
     } finally {
 
       localStorage.removeItem("debsoc_user");
-      localStorage.removeItem("debsoc_token");
 
       window.location.reload();
     }

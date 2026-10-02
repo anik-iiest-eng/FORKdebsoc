@@ -5,12 +5,11 @@
 // ----- Mobile Menu -----
 const menu = document.getElementById("mobile-menu");
 const button = document.getElementById("hamburger-btn");
-const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? "http://localhost:5000/api"
-  : "https://forkdebsoc.onrender.com/api";
+const API_BASE = "https://forkdebsoc.onrender.com/api";
 // For Vercel deployment with same-origin API routing:
 // const API_BASE = "/api";
 // --- Session Helpers ---
+localStorage.removeItem("debsoc_token");
 const getAuthToken = () => null;
 const getAuthUser = () => {
   const user = localStorage.getItem("debsoc_user");
@@ -28,8 +27,6 @@ let csrfToken;
 const apiFetch = async (url, options = {}) => {
   const method = (options.method || "GET").toUpperCase();
   const headers = new Headers(options.headers || {});
-  const token = localStorage.getItem("debsoc_token");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
   if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
     if (!csrfToken) {
       const csrfResponse = await fetch(`${API_BASE}/csrf-token`, { credentials: "include" });

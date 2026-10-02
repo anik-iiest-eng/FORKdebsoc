@@ -26,13 +26,13 @@ const routes = [
   { name: "public-achievement-privacy-check", path: "/api/achievements/user/not-a-real-id", expected: [200, 401, 403] }
 ];
 
-const tokenRoutes = [
-  { token: process.env.USER_TOKEN, name: "user-admin-events", path: "/api/admin/events", expected: [403] },
-  { token: process.env.ORGANIZER_TOKEN, name: "organizer-admin-events", path: "/api/admin/events", expected: [200] },
-  { token: process.env.ADMIN_TOKEN, name: "admin-admin-events", path: "/api/admin/events", expected: [200] },
-  { token: process.env.ORGANIZER_TOKEN, name: "organizer-role-assignment", path: "/api/admin/assign-role", method: "PATCH", body: {}, expected: [403] },
-  { token: process.env.ADMIN_TOKEN, name: "admin-invalid-role", path: "/api/admin/assign-role", method: "PATCH", body: { email: "not-a-real-user@example.invalid", role: "INVALID" }, expected: [400] }
-].filter(test => test.token);
+const sessionRoutes = [
+  { cookie: process.env.USER_COOKIE, name: "user-admin-events", path: "/api/admin/events", expected: [403] },
+  { cookie: process.env.ORGANIZER_COOKIE, name: "organizer-admin-events", path: "/api/admin/events", expected: [200] },
+  { cookie: process.env.ADMIN_COOKIE, name: "admin-admin-events", path: "/api/admin/events", expected: [200] },
+  { cookie: process.env.ORGANIZER_COOKIE, csrfToken: process.env.ORGANIZER_CSRF_TOKEN, name: "organizer-role-assignment", path: "/api/admin/assign-role", method: "PATCH", body: {}, expected: [403] },
+  { cookie: process.env.ADMIN_COOKIE, csrfToken: process.env.ADMIN_CSRF_TOKEN, name: "admin-invalid-role", path: "/api/admin/assign-role", method: "PATCH", body: { email: "not-a-real-user@example.invalid", role: "INVALID" }, expected: [400] }
+].filter(test => test.cookie);
 
 const requestOnce = async (test) => {
   const controller = new AbortController();
@@ -41,7 +41,8 @@ const requestOnce = async (test) => {
 
   try {
     const headers = {};
-    if (test.token) headers.Authorization = `Bearer ${test.token}`;
+    if (test.cookie) headers.Cookie = test.cookie;
+    if (test.csrfToken) headers["X-CSRF-Token"] = test.csrfToken;
     if (test.body !== undefined) headers["Content-Type"] = "application/json";
 
     const response = await fetch(`${baseUrl}${test.path}`, {
@@ -106,5 +107,5 @@ if (mutate) {
   console.warn("No mutation cases are enabled yet because safe cleanup requires dedicated fixture IDs.");
 }
 
-await runConcurrent(routes.concat(tokenRoutes), requests);
+await runConcurrent(routes.concat(sessionRoutes), requests);
 process.exitCode = printSummary() ? 0 : 1;

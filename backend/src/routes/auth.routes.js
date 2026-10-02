@@ -170,7 +170,6 @@ router.post('/login', [
     const token = createToken(user);
     res.cookie('debsoc_token', token, authCookieOptions);
     return res.json({
-      token,
       user: {
         id: user.id,
         username: user.username,
@@ -377,7 +376,6 @@ router.post('/verify-otp', [
     res.cookie('debsoc_token', token, authCookieOptions);
     return res.status(200).json({
       message: 'Account successfully verified!',
-      token,
       user: {
         id: verifiedUser.id,
         email: verifiedUser.email,

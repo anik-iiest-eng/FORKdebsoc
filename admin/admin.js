@@ -2,11 +2,10 @@
    DebSoc admin dashboard (lightweight CMS)
    Auth, CSRF flow and existing API endpoints are unchanged.
    ========================================================================== */
-const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-  ? "http://localhost:5000/api"
-  : "https://forkdebsoc.onrender.com/api";
+const API_BASE = "https://forkdebsoc.onrender.com/api";
 // For Vercel deployment with same-origin API routing:
 // const API_BASE = "/api";
+localStorage.removeItem("debsoc_token");
 let csrfToken;
 
 const apiFetch = async (url, options = {}) => {
@@ -66,14 +65,8 @@ async function copyText(text) {
   }
 }
 
-// Bearer header is kept for parity with the old dashboard; cookies remain the primary session.
-const authHeaders = () => {
-  const t = localStorage.getItem("debsoc_token");
-  return t ? { Authorization: `Bearer ${t}` } : {};
-};
-
 async function api(path, { method = "GET", json, form } = {}) {
-  const headers = { ...authHeaders() };
+  const headers = {};
   let body;
   if (json !== undefined) { headers["Content-Type"] = "application/json"; body = JSON.stringify(json); }
   else if (form) body = form; // browser sets the multipart boundary

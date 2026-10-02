@@ -2,10 +2,7 @@ import jwt from "jsonwebtoken";
 import { jwtSecret } from "../config/env.js";
 
 export const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
-  const cookieToken = req.cookies?.debsoc_token;
-  const token = cookieToken || bearerToken;
+  const token = req.cookies?.debsoc_token;
 
   if (!token) {
     return res.status(401).json({ error: "Access Denied: No token provided" });

@@ -19,10 +19,12 @@ flowchart TD
     OTP --> UserDB[(users)]
     Login --> UserDB
     Login --> JWT[Signed JWT]
+    JWT --> Cookie[HttpOnly session cookie]
 
     Events --> Verify[verifyToken]
     Achievements --> Verify
     Admin --> Verify
+    Cookie --> Verify
     Verify --> Role{Role check}
     Role -->|USER| Student[Register for event or redeem code]
     Role -->|ORGANIZER| Organize[Create/update events and mint codes]
@@ -57,7 +59,7 @@ flowchart TD
 | Delete history | No | No | Yes | Yes | `history` and cascading relations |
 | Assign a role | No | No | No | Yes | `users.role` |
 
-The UI may hide controls, but the backend middleware is the authority. A forged or stale browser value must never grant access.
+The UI may hide controls, but the backend middleware is the authority. Authenticated requests use the HttpOnly `debsoc_token` cookie; browser-readable bearer tokens are not accepted. Unsafe cookie-authenticated requests also require the CSRF token.
 
 ## Route Guard Layout
 
@@ -115,12 +117,14 @@ node scripts/stress-test.mjs --base-url http://localhost:5000 --concurrency 10 -
 
 The default run is read-only plus unauthorized-access checks. It does not create users, events, codes, or history.
 
-For checks using existing tokens:
+For checks using existing browser sessions, set each role's cookie header and CSRF token. The cookie header must include both `debsoc_token` and `csrf_token` for the corresponding signed-in session:
 
 ```text
-$env:USER_TOKEN = "..."
-$env:ORGANIZER_TOKEN = "..."
-$env:ADMIN_TOKEN = "..."
+$env:USER_COOKIE = "debsoc_token=...; csrf_token=..."
+$env:ORGANIZER_COOKIE = "debsoc_token=...; csrf_token=..."
+$env:ADMIN_COOKIE = "debsoc_token=...; csrf_token=..."
+$env:ORGANIZER_CSRF_TOKEN = "..."
+$env:ADMIN_CSRF_TOKEN = "..."
 node scripts/stress-test.mjs --concurrency 10 --requests 100
 ```
 

@@ -32,12 +32,8 @@ if (process.env.NODE_ENV === "production") {
 
 const app = express();
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://localhost:5500",
-  "http://127.0.0.1:5500",
-  "http://localhost:8000",
-  "http://127.0.0.1:8000"
+  "https://anik-iiest-eng.github.io",
+  "https://debsociiests.in"
 ].join(",")).split(",").map((origin) => origin.trim()).filter(Boolean);
 
 if (process.env.NODE_ENV === "production") {
@@ -80,7 +76,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"]
+  allowedHeaders: ["Content-Type", "X-CSRF-Token"]
 }));
 app.use(compression());
 app.use(hpp());
