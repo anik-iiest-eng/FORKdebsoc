@@ -23,12 +23,24 @@
   <main id="feed" class="history-feed" aria-live="polite">
     <div class="history-state">Loading the archive…</div>
   </main>
+  <dialog id="image-viewer" class="image-viewer" aria-label="Image viewer">
+    <button class="image-viewer-close" type="button" autofocus>Close</button>
+    <img alt="">
+  </dialog>
 
   <script>
     const API_BASE = "https://forkdebsoc.onrender.com/api";
     const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" });
-    // poster = Oasis · crusader = orange halftone collage · circles = becon duotone · collage = Inferno (colour)
-    const VARIANTS = ["poster", "crusader", "circles", "collage"];
+    const POSTER_PALETTES = [
+      "pastel-rose", "pastel-peach", "pastel-butter", "pastel-mint", "pastel-sage",
+      "pastel-sky", "pastel-aqua", "pastel-lavender", "pastel-lilac", "pastel-coral",
+      "bold-pink", "bold-orange", "bold-blue"
+    ];
+
+    const getEventStyle = (index) => ({
+      layout: index % 2 === 0 ? "collage" : "poster",
+      palette: POSTER_PALETTES[Math.floor(Math.random() * POSTER_PALETTES.length)]
+    });
 
     const escapeHTML = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -42,14 +54,14 @@
     const eventImages = (event) => {
       const images = [event.coverImage, ...(Array.isArray(event.images) ? event.images : [])]
         .filter((image) => typeof image === "string" && image.trim());
-      return [...new Set(images)].slice(0, 7);
+      return [...new Set(images)];
     };
 
     const imageMarkup = (src, alt, className = "") => {
       const onError = className === "cover-image"
         ? "const backup=this.closest('.entry-art').querySelector('.event-thumb img');if(backup){this.src=backup.src;backup.closest('figure').remove()}else{this.closest('figure').classList.add('image-unavailable');this.remove()}"
         : "this.closest('figure').remove()";
-      return `<img class="${className}" src="${escapeHTML(src)}" alt="${escapeHTML(alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="${onError}">`;
+      return `<img class="${className}" src="${escapeHTML(src)}" alt="${escapeHTML(alt)}" role="button" tabindex="0" aria-label="View full-screen: ${escapeHTML(alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="${onError}">`;
     };
 
     const renderImages = (images, title) => images.length
@@ -87,10 +99,10 @@
       const awardCount = Number.isInteger(event.awardCount) ? event.awardCount : awards.length;
       const description = event.description || "";
       const year = date ? new Date(event.eventDate).getFullYear() : "ARCHIVE";
-      const variant = VARIANTS[index % VARIANTS.length];
+      const { layout, palette } = getEventStyle(index);
 
       return `
-        <article class="history-entry history-entry--${variant}">
+        <article class="history-entry history-entry--${layout}${layout === "poster" ? ` history-entry--${palette}` : ""}">
           <div class="entry-layout">
             <header class="entry-head">
               <p class="entry-meta"><span>${escapeHTML(date || "Undated")}</span><i></i><span>${escapeHTML(location)}</span></p>
@@ -138,6 +150,26 @@
         feed.querySelector("button").addEventListener("click", loadHistory);
       }
     };
+
+    const imageViewer = document.getElementById("image-viewer");
+    const viewerImage = imageViewer.querySelector("img");
+    const closeViewer = () => imageViewer.close();
+    document.getElementById("feed").addEventListener("click", (event) => {
+      const image = event.target.closest(".entry-cover img, .event-thumb img");
+      if (!image || !image.isConnected) return;
+      viewerImage.src = image.currentSrc || image.src;
+      viewerImage.alt = image.alt;
+      imageViewer.showModal();
+    });
+    document.getElementById("feed").addEventListener("keydown", (event) => {
+      if ((event.key !== "Enter" && event.key !== " ") || !event.target.matches(".entry-cover img, .event-thumb img")) return;
+      event.preventDefault();
+      event.target.click();
+    });
+    imageViewer.querySelector(".image-viewer-close").addEventListener("click", closeViewer);
+    imageViewer.addEventListener("click", (event) => {
+      if (event.target === imageViewer) closeViewer();
+    });
 
     document.addEventListener("DOMContentLoaded", loadHistory);
   </script>

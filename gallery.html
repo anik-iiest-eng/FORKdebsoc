@@ -4,410 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gallery — Debating Society IIEST Shibpur</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --crimson: #700c0c;
-    --crimson-deep: #4a0816;
-    --gold: #C9963A;
-    --gold-light: #e8b84b;
-    --cream: #0B0C10;
-    --cream-dark: #12131C;
-    --ink: #FAF7F2;
-    --ink-muted: #D1D5DB;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; }
-
-  /* ── NAV ── */
-  nav {
-    position: sticky; top: 0; width: 100%; z-index: 1000;
-    background: linear-gradient(135deg, rgba(128,0,32,0.96) 0%, rgba(92,0,23,0.96) 100%);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid rgba(201,150,58,0.14);
-  }
-
-  .nav-inner {
-    max-width: 1200px; margin: 0 auto;
-    height: 48px; padding: 0 20px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 15px; font-weight: 700; letter-spacing: 0.06em;
-    color: #FAF7F2; text-decoration: none;
-    flex-shrink: 0; opacity: 0.9;
-    transition: opacity 0.2s;
-  }
-  .nav-logo:hover { opacity: 1; }
-
-  .nav-links { display: flex; align-items: center; gap: 2px; }
-
-  .nav-btn {
-    color: rgba(250,247,242,0.8);
-    font-size: 12px; font-weight: 500;
-    padding: 6px 13px; border-radius: 6px;
-    text-decoration: none;
-    transition: background 0.2s, color 0.2s;
-    border: none; background: transparent;
-    cursor: pointer; font-family: inherit;
-    letter-spacing: 0.03em; white-space: nowrap;
-  }
-  .nav-btn:hover, .nav-btn.active {
-    background: rgba(250,247,242,0.11);
-    color: #FAF7F2;
-  }
-  .nav-events-btn { display: flex; align-items: center; gap: 4px; }
-
-  .nav-contact-btn {
-    padding: 7px 18px; border-radius: 999px;
-    font-size: 12px; font-weight: 700;
-    background: #DAA520; color: #800020;
-    text-decoration: none; margin-left: 6px;
-    transition: background 0.2s, transform 0.15s;
-    white-space: nowrap;
-  }
-  .nav-contact-btn:hover { background: #e8c040; transform: translateY(-1px); }
-
-  /* Dropdown setup */
-  .nav-events-wrap { position: relative; }
-  .nav-events-drop {
-    position: absolute; left: 0; top: calc(100% + 8px);
-    width: 160px; border-radius: 10px;
-    background: var(--cream-dark);
-    box-shadow: 0 10px 36px rgba(0,0,0,0.4);
-    opacity: 0; visibility: hidden;
-    transform: translateY(-6px);
-    transition: all 0.2s ease;
-    z-index: 100; overflow: hidden;
-  }
-  .nav-events-wrap:hover .nav-events-drop,
-  .nav-events-wrap:focus-within .nav-events-drop {
-    opacity: 1; visibility: visible; transform: translateY(0);
-  }
-  .nav-events-drop a {
-    display: block; padding: 11px 16px;
-    font-size: 12px; font-weight: 500;
-    color: #FAF7F2; text-decoration: none;
-    transition: background 0.15s;
-  }
-  .nav-events-drop a:hover { background: rgba(255,255,255,0.06); }
-
-  /* Hamburger Toggle Structure */
-  .nav-hamburger {
-    display: none; flex-direction: column;
-    gap: 5px; cursor: pointer;
-    padding: 8px; background: none; border: none;
-  }
-  .nav-hamburger span {
-    display: block; width: 22px; height: 2px;
-    background: rgba(250,246,238,0.85); border-radius: 2px;
-    transition: all 0.25s ease;
-  }
-  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-  .nav-mobile {
-    display: none; padding: 8px 0 14px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    background: #800020;
-  }
-  .nav-mobile.open { display: block; }
-
-  .mob-link {
-    display: block; padding: 12px 20px;
-    color: rgba(250,247,242,0.8);
-    text-decoration: none; font-size: 14px; font-weight: 500;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    transition: color 0.15s;
-  }
-  .mob-link:hover, .mob-link.active { color: #DAA520; }
-  .mob-link-contact { color: #DAA520 !important; }
-
-  /* ── PAGE HEADER ── */
-  .page-header {
-    padding-top: 44px;
-    background: linear-gradient(160deg, #4a0816 0%, var(--crimson) 45%, #8b1a1a 100%);
-    padding-bottom: 80px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .page-header::before {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 70% 60% at 80% -10%, rgba(201,150,58,0.18), transparent),
-      radial-gradient(ellipse 40% 50% at 10% 110%, rgba(201,150,58,0.10), transparent);
-  }
-  .page-header-inner { position: relative; z-index: 2; padding-top: 72px; padding-bottom: 8px; }
-  
-  .page-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(52px, 8vw, 88px); font-weight: 900;
-    color: #FAF7F2; line-height: 0.95; letter-spacing: -3px;
-    margin-bottom: 0;
-  }
-  .header-wave { position: absolute; bottom: -1px; left: 0; right: 0; line-height: 0; }
-  .header-wave svg { display: block; width: 100%; }
-
-  /* ── FILTER BAR ── */
-  .filter-bar {
-    background: var(--cream);
-    padding: 0 20px;
-    position: sticky; top: 48px; z-index: 50;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
-  }
-  .filter-bar-inner {
-    max-width: 1160px; margin: 0 auto;
-    display: flex; align-items: flex-end; gap: 0;
-    overflow-x: auto; scrollbar-width: none;
-  }
-  .filter-bar-inner::-webkit-scrollbar { display: none; }
-  
-  .filter-tab {
-    flex-shrink: 0;
-    padding: 14px 20px 15px;
-    font-size: 10.5px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase;
-    color: var(--ink-muted); background: transparent; border: none;
-    cursor: pointer; transition: all 0.2s ease;
-    white-space: nowrap; position: relative;
-  }
-  .filter-tab::after {
-    content: '';
-    position: absolute; bottom: -2px; left: 20px; right: 20px; height: 2px;
-    background: var(--gold); border-radius: 2px 2px 0 0;
-    transform: scaleX(0); transition: transform 0.22s ease;
-  }
-  .filter-tab:hover, .filter-tab.active { color: var(--gold-light); }
-  .filter-tab.active::after { transform: scaleX(1); }
-
-  /* ── GALLERY BODY ── */
-  .gallery-body { max-width: 1160px; margin: 0 auto; padding: 56px 20px 100px; }
-
-  /* ── YEAR GROUP ── */
-  .year-group { margin-bottom: 72px; display: none; }
-  .year-group.visible { display: block; }
-
-  .year-label { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-  .year-label-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 11px; font-weight: 700; letter-spacing: 4px;
-    color: var(--gold); white-space: nowrap; text-transform: uppercase;
-  }
-  .year-label-line {
-    flex: 1; height: 1px;
-    background: linear-gradient(to right, rgba(201,150,58,0.35), transparent);
-  }
-  .year-label-count {
-    font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--ink-muted); opacity: 0.5; white-space: nowrap;
-  }
-
-  /* ── RESPONSIVE GRID ── */
-  .photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-
-  .photo-grid.has-many .photo-item:nth-child(5n+1) { grid-column: span 2; aspect-ratio: 16/9; }
-
-  .photo-item {
-    position: relative; overflow: hidden;
-    border-radius: 4px;
-    background: rgba(255,255,255,0.03);
-    cursor: pointer;
-    aspect-ratio: 4/3;
-    will-change: transform;
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .photo-item.in-view { opacity: 1; transform: translateY(0); }
-
-  .photo-item img {
-    width: 100%; height: 100%; object-fit: cover;
-    display: block; position: relative; z-index: 1;
-    transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-  .photo-item:hover img { transform: scale(1.07); }
-
-  /* overlay */
-  .photo-item-overlay {
-    position: absolute; inset: 0; z-index: 2;
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%);
-    opacity: 0; transition: opacity 0.32s ease;
-    display: flex; align-items: flex-end; justify-content: flex-end;
-    padding: 14px;
-  }
-  .photo-item:hover .photo-item-overlay { opacity: 1; }
-  .photo-item-expand {
-    width: 34px; height: 34px;
-    background: rgba(201,150,58,0.92); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    transform: scale(0.8) rotate(-15deg);
-    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  .photo-item:hover .photo-item-expand { transform: scale(1) rotate(0deg); }
-
-  /* ── LIGHTBOX ── */
-  .lightbox {
-    position: fixed; inset: 0; z-index: 9999;
-    background: rgba(4,4,6,0.98);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.28s ease, visibility 0.28s ease;
-  }
-  .lightbox.open { opacity: 1; visibility: visible; }
-
-  .lightbox-img-wrap {
-    position: relative;
-    max-width: 92vw; max-height: 88vh;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .lightbox-img-wrap img {
-    max-width: 92vw; max-height: 84vh;
-    object-fit: contain; border-radius: 3px;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-    transform: scale(0.93); opacity: 0;
-    transition: transform 0.32s cubic-bezier(0.34,1.2,0.64,1), opacity 0.28s ease;
-  }
-  .lightbox.open .lightbox-img-wrap img { transform: scale(1); opacity: 1; }
-
-  .lightbox-top {
-    position: fixed; top: 0; left: 0; right: 0; height: 60px;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px; z-index: 10001;
-  }
-  .lightbox-counter-top { font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.5); }
-  
-  .lightbox-close {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
-    color: white; font-size: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, transform 0.2s;
-  }
-  .lightbox-close:hover { background: rgba(255,255,255,0.16); transform: rotate(90deg); }
-
-  .lightbox-nav {
-    position: fixed; top: 50%; transform: translateY(-50%);
-    width: 48px; height: 48px; border-radius: 50%;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.75); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; font-size: 20px; z-index: 10001;
-  }
-  .lightbox-nav:hover { background: rgba(201,150,58,0.22); border-color: rgba(201,150,58,0.45); color: white; }
-  .lightbox-prev { left: 16px; }
-  .lightbox-next { right: 16px; }
-
-  .lightbox-strip {
-    position: fixed; bottom: 0; left: 0; right: 0; height: 72px;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
-    padding: 0 16px; overflow-x: auto; scrollbar-width: none; z-index: 10001;
-  }
-  .lightbox-strip::-webkit-scrollbar { display: none; }
-  .lightbox-thumb {
-    flex-shrink: 0; width: 52px; height: 40px;
-    border-radius: 3px; overflow: hidden; cursor: pointer;
-    opacity: 0.45; border: 1.5px solid transparent; transition: all 0.2s;
-  }
-  .lightbox-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .lightbox-thumb.active { opacity: 1; border-color: var(--gold); }
-
-  /* ── FOOTER ── */
-  .site-footer { background: linear-gradient(180deg, #300810 0%, #160205 100%); padding: 64px 24px 32px; }
-  .footer-inner { max-width: 1160px; margin: 0 auto; }
-  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; }
-  .footer-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-  .footer-logo { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
-  .footer-brand-name { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #FAF7F2; }
-  .footer-brand-sub { font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: rgba(250,246,238,0.4); margin-top: 4px; }
-  .footer-desc { font-size: 13px; line-height: 1.9; color: rgba(250,246,238,0.55); max-width: 360px; }
-  .footer-col-heading { font-size: 9.5px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
-  .footer-links-list { list-style: none; }
-  .footer-links-list li+li { margin-top: 11px; }
-  .footer-links-list a { color: rgba(250,246,238,0.55); text-decoration: none; font-size: 13px; transition: color 0.2s; }
-  .footer-links-list a:hover { color: #FAF7F2; }
-  .social-icons { display: flex; gap: 10px; }
-  .social-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(201,150,58,0.2);
-    color: var(--gold); text-decoration: none; transition: all 0.22s;
-  }
-  .social-icon:hover { background: rgba(201,150,58,0.14); transform: translateY(-2px); border-color: rgba(201,150,58,0.4); }
-  .footer-divider { height: 1px; background: linear-gradient(to right, transparent, rgba(201,150,58,0.18), transparent); margin: 44px 0 22px; }
-  .footer-bottom { text-align: center; font-size: 11px; letter-spacing: 1px; color: rgba(250,246,238,0.3); }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 1024px) {
-    .photo-grid { grid-template-columns: repeat(3, 1fr); }
-    .photo-grid.has-many .photo-item:nth-child(5n+1) { grid-column: span 1; aspect-ratio: 4/3; }
-  }
-  @media (max-width: 720px) {
-    .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .photo-grid.has-many .photo-item:nth-child(5n+1) { grid-column: span 1; aspect-ratio: 4/3; }
-    .footer-grid { grid-template-columns: 1fr; gap: 36px; }
-    .nav-links { display: none; }
-    .nav-hamburger { display: flex; }
-    .lightbox-strip { height: 60px; }
-    .lightbox-thumb { width: 42px; height: 32px; }
-    .lightbox-nav { width: 38px; height: 38px; font-size: 16px; }
-    .lightbox-prev { left: 8px; }
-    .lightbox-next { right: 8px; }
-  }
-  @media (max-width: 420px) {
-    .gallery-body { padding: 36px 14px 80px; }
-    .page-header h1 { letter-spacing: -2px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .photo-item { transition: none; opacity: 1; transform: none; }
-    .photo-item img, .lightbox-img-wrap img { transition: none; }
-  }
-</style>
-<link rel="stylesheet" href="editorial-theme.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Gochi+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="history.css">
 </head>
 
-<body class="editorial-page">
+<body class="gallery-page">
 
 
 
-<div class="page-header">
-  <div class="page-header-inner">
-    <h1>Gallery</h1>
+<header class="history-masthead">
+  <div class="history-masthead-inner">
+    <p class="history-kicker">DEBSOC / IIEST SHIBPUR / ARCHIVE</p>
+    <h1>Gallery<br><span>in session.</span></h1>
+    <p class="history-intro">Moments, memories, and the people behind the debate.</p>
+    <div class="history-index"><span>REMEMBER</span><i></i><span>REVISIT</span><i></i><span>RECONNECT</span></div>
   </div>
-  <div class="header-wave">
-    <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-      <path d="M0 48 C360 0 1080 0 1440 48 L1440 48 L0 48Z" fill="#0B0C10"/>
-    </svg>
-  </div>
-</div>
+  <div class="masthead-mark" aria-hidden="true">G</div>
+</header>
 
-<div class="filter-bar">
-  <div class="filter-bar-inner">
-    <button class="filter-tab active" data-filter="all">All</button>
-    <button class="filter-tab" data-filter="becon">BECON</button>
-    <button class="filter-tab" data-filter="2026">2026</button>
-    <button class="filter-tab" data-filter="2025">2025</button>
-    <button class="filter-tab" data-filter="2024">2024</button>
-    <button class="filter-tab" data-filter="2023">2023</button>
-    <button class="filter-tab" data-filter="2020">2020</button>
-    <button class="filter-tab" data-filter="2019">2019</button>
-    <button class="filter-tab" data-filter="2018">2018</button>
-    <button class="filter-tab" data-filter="2017">2017</button>
-    <button class="filter-tab" data-filter="2016">2016</button>
-    <button class="filter-tab" data-filter="2015">2015</button>
-    <button class="filter-tab" data-filter="2014">2014</button>
-    <button class="filter-tab" data-filter="2013">2013</button>
-  </div>
-</div>
+<label class="history-index" for="gallery-filter">BROWSE ARCHIVE <i></i>
+  <select id="gallery-filter" aria-label="Filter gallery by year">
+    <option value="all">All photos</option>
+    <option value="becon">BECON</option>
+    <option value="2026">2026</option>
+    <option value="2025">2025</option>
+    <option value="2024">2024</option>
+    <option value="2023">2023</option>
+    <option value="2020">2020</option>
+    <option value="2019">2019</option>
+    <option value="2018">2018</option>
+    <option value="2017">2017</option>
+    <option value="2016">2016</option>
+    <option value="2015">2015</option>
+    <option value="2014">2014</option>
+    <option value="2013">2013</option>
+  </select>
+</label>
 
-<div class="gallery-body">
+<main id="gallery-feed" class="history-feed">
 
   <div class="year-group visible" data-group="becon">
     <div class="year-label">
@@ -524,20 +159,12 @@
     <div class="photo-grid"><div class="photo-item" data-src="photos/2013_1.webp"><img src="photos/2013_1.webp" alt="2013" loading="lazy"><div class="photo-item-overlay"><div class="photo-item-expand"><svg width="14" height="14" stroke="white" stroke-width="2.2" fill="none" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div></div></div></div>
   </div>
 
-</div>
+</main>
 
-<div class="lightbox" id="lightbox">
-  <div class="lightbox-top">
-    <span class="lightbox-counter-top" id="lightboxCounter"></span>
-    <button class="lightbox-close" id="lightboxClose" aria-label="Close">&#x2715;</button>
-  </div>
-  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous">&#8592;</button>
-  <div class="lightbox-img-wrap">
-    <img id="lightboxImg" src="" alt="">
-  </div>
-  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next">&#8594;</button>
-  <div class="lightbox-strip" id="lightboxStrip"></div>
-</div>
+<dialog id="image-viewer" class="image-viewer" aria-label="Gallery image viewer">
+  <button class="image-viewer-close" id="image-viewer-close" type="button" autofocus>Close</button>
+  <img id="image-viewer-image" src="" alt="">
+</dialog>
 
 <footer class="site-footer">
   <div class="footer-inner">
@@ -584,130 +211,106 @@
 </footer>
 
 <script>
-const hamburgerBtn = document.getElementById('hamburger-btn');
-const mobileMenu  = document.getElementById('mobile-menu');
-hamburgerBtn.addEventListener('click', () => {
-  hamburgerBtn.classList.toggle('open');
-  mobileMenu.classList.toggle('open');
-});
-document.addEventListener('click', e => {
-  if (!mobileMenu.classList.contains('open')) return;
-  if (!mobileMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-    hamburgerBtn.classList.remove('open');
-    mobileMenu.classList.remove('open');
-  }
-});
-
-  // ── SCROLL REVEAL ──
-  let observer;
-  function initObserver() {
-    if (observer) observer.disconnect();
-    observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          const siblings = Array.from(el.closest('.photo-grid').querySelectorAll('.photo-item'));
-          const idx = siblings.indexOf(el);
-          setTimeout(() => el.classList.add('in-view'), idx * 45);
-          observer.unobserve(el);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.year-group.visible .photo-item').forEach(el => {
-      if (!el.classList.contains('in-view')) observer.observe(el);
-    });
-  }
-  initObserver();
-
-  // ── LIGHTBOX ──
+  const yearGroups = Array.from(document.querySelectorAll('.year-group'));
+  const galleryFilter = document.getElementById('gallery-filter');
+  const imageViewer = document.getElementById('image-viewer');
+  const viewerImage = document.getElementById('image-viewer-image');
   let allItems = [];
   let currentIndex = 0;
 
-  function buildItemList() {
-    allItems = Array.from(document.querySelectorAll('.year-group.visible .photo-item'));
-  }
+  yearGroups.forEach(group => {
+    const title = group.querySelector('.year-label-text').textContent.trim();
+    const count = group.querySelector('.year-label-count').textContent.trim();
+    const gallery = group.querySelector('.photo-grid');
+    const photos = Array.from(gallery.querySelectorAll('.photo-item'));
+    const cover = document.createElement('figure');
+    const layout = document.createElement('div');
+    const heading = document.createElement('header');
+    const meta = document.createElement('p');
+    const headingTitle = document.createElement('h2');
+    const art = document.createElement('div');
 
-  function openLightbox(item) {
-    buildItemList();
-    currentIndex = allItems.indexOf(item);
-    buildStrip();
-    showLightboxImage();
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
+    const hasGallery = photos.length > 1;
+    group.classList.add('history-entry');
+    group.classList.add(hasGallery ? 'history-entry--collage' : 'history-entry--poster');
+    layout.className = 'entry-layout';
+    heading.className = 'entry-head';
+    meta.className = 'entry-meta';
+    meta.textContent = count;
+    headingTitle.textContent = title;
+    heading.append(meta, headingTitle);
+    art.className = 'entry-art';
+    gallery.className = 'event-gallery';
 
-  function buildStrip() {
-    const strip = document.getElementById('lightboxStrip');
-    strip.innerHTML = '';
-    allItems.forEach((item, i) => {
-      const thumb = document.createElement('div');
-      thumb.className = 'lightbox-thumb' + (i === currentIndex ? ' active' : '');
-      const img = document.createElement('img');
-      img.src = item.querySelector('img').src;
-      img.alt = '';
-      img.loading = 'lazy';
-      thumb.appendChild(img);
-      thumb.addEventListener('click', () => { currentIndex = i; showLightboxImage(); });
-      strip.appendChild(thumb);
-    });
-  }
+    if (hasGallery) {
+      photos.forEach(item => {
+        item.className = 'event-thumb';
+        item.querySelector('.photo-item-overlay').remove();
+      });
+      art.append(gallery);
+    } else {
+      const coverImage = photos[0].querySelector('img');
+      coverImage.classList.add('cover-image');
+      cover.className = 'entry-cover';
+      cover.append(coverImage);
 
-  function showLightboxImage() {
-    const src = allItems[currentIndex].querySelector('img').src;
-    const lbImg = document.getElementById('lightboxImg');
-    lbImg.style.opacity = '0';
-    lbImg.style.transform = 'scale(0.93)';
-    lbImg.src = src;
-    lbImg.onload = () => {
-      lbImg.style.opacity = '1';
-      lbImg.style.transform = 'scale(1)';
-    };
-    document.getElementById('lightboxCounter').textContent = (currentIndex + 1) + ' / ' + allItems.length;
-    document.querySelectorAll('.lightbox-thumb').forEach((t, i) => {
-      t.classList.toggle('active', i === currentIndex);
-    });
-    const activeThumb = document.querySelectorAll('.lightbox-thumb')[currentIndex];
-    if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  }
-
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  }
+      const caption = document.createElement('figcaption');
+      caption.className = 'cover-caption';
+      caption.textContent = title;
+      cover.append(caption);
+      art.append(cover);
+    }
+    layout.append(heading, art);
+    group.replaceChildren(layout);
+  });
 
   function shiftLightbox(dir) {
     currentIndex = (currentIndex + dir + allItems.length) % allItems.length;
     showLightboxImage();
   }
 
-  document.querySelectorAll('.photo-item').forEach(item => {
-    item.addEventListener('click', () => openLightbox(item));
+  function showLightboxImage() {
+    const image = allItems[currentIndex].querySelector('img');
+    viewerImage.src = image.currentSrc || image.src;
+    viewerImage.alt = image.alt;
+  }
+
+  function openLightbox(item) {
+    allItems = Array.from(document.querySelectorAll('.year-group:not([hidden]) .entry-cover, .year-group:not([hidden]) .event-thumb'));
+    currentIndex = allItems.indexOf(item);
+    showLightboxImage();
+    imageViewer.showModal();
+  }
+
+  yearGroups.forEach(group => {
+    group.hidden = false;
+    group.querySelectorAll('.entry-cover, .event-thumb').forEach(item => {
+      item.setAttribute('role', 'button');
+      item.tabIndex = 0;
+      item.setAttribute('aria-label', `View ${item.querySelector('img').alt} full screen`);
+      item.addEventListener('click', () => openLightbox(item));
+      item.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openLightbox(item);
+        }
+      });
+    });
   });
 
-  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
-  document.getElementById('lightboxPrev').addEventListener('click', () => shiftLightbox(-1));
-  document.getElementById('lightboxNext').addEventListener('click', () => shiftLightbox(1));
-
-  document.getElementById('lightbox').addEventListener('click', e => {
-    if (e.target === document.getElementById('lightbox')) closeLightbox();
+  galleryFilter.addEventListener('change', () => {
+    yearGroups.forEach(group => {
+      group.hidden = galleryFilter.value !== 'all' && group.dataset.group !== galleryFilter.value;
+    });
   });
+
+  document.getElementById('image-viewer-close').addEventListener('click', () => imageViewer.close());
 
   document.addEventListener('keydown', e => {
-    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (!imageViewer.open) return;
     if (e.key === 'ArrowLeft') shiftLightbox(-1);
     if (e.key === 'ArrowRight') shiftLightbox(1);
-    if (e.key === 'Escape') closeLightbox();
   });
-
-  let touchStartX = 0;
-  document.getElementById('lightbox').addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].clientX;
-  }, { passive: true });
-  document.getElementById('lightbox').addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 48) shiftLightbox(dx < 0 ? 1 : -1);
-  }, { passive: true });
 </script>
 <script src="footer.js"></script>
 <script src="nav.js"></script>

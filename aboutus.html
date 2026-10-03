@@ -1,460 +1,129 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About Debsoc</title>
-  <link rel="stylesheet" href="tailwind.css">
- 
-  <style>
-    :root {
-      --cream: #0B0C10;
-      --ink-muted: #D1D5DB;
-      --gold-pale: #F3E5AB;
-      --crimson-deep: #700c0c;
-      --gold: #C9963A;
-      --gold-light: #e8b84b;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Georgia, 'Times New Roman', Times, serif;
-      background: var(--cream);
-      overflow-x: hidden;
-    }
-
-    /* ── NAV (tribunal-style) ── */
-    .nav-btn {
-      color: rgba(250, 247, 242, 0.85);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: background 0.2s, color 0.2s;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-family:'Times New Roman', Times, serif;
-      letter-spacing: 0.02em;
-    }
-
-    .nav-btn:hover {
-      background: rgba(250, 247, 242, 0.12);
-      color: #FAF7F2;
-    }
-
-    .active-nav {
-      background: rgba(255, 255, 255, 0.15);
-      color: #FAF7F2;
-    }
-
-    /* ── PAGE HERO ── */
-    .page-hero {
-      background: var(--crimson-deep);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 440px;
-    }
-
-    .page-hero img {
-      max-width: 750px;
-      width: 95%;
-      height: auto;
-      display: block;
-      object-fit: contain;
-    }
-
-    /* ══ INTRO EDITORIAL SPLIT ══ */
-    .intro-section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 32px;
-    }
-
-    .intro-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 80px;
-      align-items: start;
-      margin-bottom: 80px;
-    }
-
-    .intro-headline {
-      font-family: 'Times New Roman', Times, serif;
-      font-size: clamp(34px, 4vw, 52px);
-      font-weight: 900;
-      font-style: italic;
-      text-align: center;
-      color: white;
-      line-height: 1.12;
-      margin-bottom: 28px;
-      letter-spacing: -1px;
-      margin-top: 28px;
-    }
-
-    .intro-body p {
-      font-family: Georgia, 'Times New Roman', Times, serif;
-      font-size: 19px;
-      line-height: 1.85;
-      color: var(--ink-muted);
-      margin-bottom: 18px;
-    }
-
-    .intro-body p strong {
-      color: var(--gold-pale);
-      font-weight: 600;
-    }
-
-    /* ══ CYBER TIMELINE FEATURE ══ */
-    .cta-section {
-      padding: clamp(48px, 8vw, 96px) 24px;
-      background: #000;
-      text-align: left;
-      position: relative;
-      overflow: hidden;
-      border-top: 1px solid rgba(201, 150, 58, 0.35);
-      border-bottom: 1px solid rgba(201, 150, 58, 0.35);
-      font-family: "Courier New", Courier, monospace;
-    }
-
-    .cta-section::before {
-      content: 'DEBSOC // ARCHIVE ACCESS // 001';
-      position: absolute;
-      top: 18px;
-      left: 24px;
-      color: rgba(201, 150, 58, 0.6);
-      font-size: 10px;
-      letter-spacing: 0.18em;
-    }
-
-    .cta-inner {
-      display: grid;
-      grid-template-columns: minmax(230px, 0.8fr) minmax(0, 1.4fr);
-      align-items: center;
-      gap: clamp(28px, 7vw, 100px);
-      position: relative;
-      z-index: 2;
-      max-width: 1120px;
-      margin: 0 auto;
-      padding-top: 18px;
-    }
-
-    .cta-art-link { display: block; justify-self: center; line-height: 0; }
-    .cta-art {
-      display: block;
-      width: min(100%, 390px);
-      max-height: 510px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 22px rgba(201, 150, 58, 0.14));
-      transition: transform 0.3s ease, filter 0.3s ease;
-    }
-    .cta-art-link:hover .cta-art,
-    .cta-art-link:focus-visible .cta-art {
-      transform: translateY(-6px) rotate(-1deg);
-      filter: drop-shadow(0 0 30px rgba(201, 150, 58, 0.3));
-    }
-    .cta-copy { max-width: 620px; }
-    .cta-eyebrow {
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 600;
-      margin-bottom: 14px;
-    }
-
-    .cta-headline {
-      font-family: "Courier New", Courier, monospace;
-      font-size: clamp(28px, 5vw, 58px);
-      font-weight: 900;
-      color: var(--gold-light);
-      line-height: 1.05;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      text-shadow: 3px 3px 0 rgba(128, 0, 32, 0.55);
-    }
-
-    .cta-sub {
-      max-width: 570px;
-      margin: 0 0 30px;
-      color: rgba(243, 229, 171, 0.78);
-      font-size: 14px;
-      line-height: 1.8;
-    }
-
-    .cta-buttons {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .btn-primary {
-      display: block;
-      width: fit-content;
-      max-width: 100%;
-      transition: transform 0.2s ease, filter 0.2s ease;
-    }
-    .btn-primary img {
-      display: block;
-      width: auto;
-      height: min(140px, 18vh);
-      max-width: 100%;
-      object-fit: contain;
-    }
-    .btn-primary:hover,
-    .btn-primary:focus-visible {
-      transform: translateY(-3px);
-      filter: drop-shadow(0 5px 0 rgba(201, 150, 58, 0.25));
-      outline: none;
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fade-up {
-      from {
-        opacity: 0;
-        transform: translateY(28px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .fade-in {
-      animation: fade-up 0.8s ease both;
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 960px) {
-      .intro-grid {
-        grid-template-columns: 1fr;
-        gap: 48px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .cta-inner {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-      .cta-art-link { order: -1; }
-      .cta-copy { margin: 0 auto; }
-      .cta-buttons {
-        justify-content: center;
-      }
-      .cta-art { max-height: 390px; }
-    }
-  </style>
-  <link rel="stylesheet" href="editorial-theme.css">
+  <meta name="theme-color" content="#151515">
+  <title>About DebSoc | IIEST Shibpur</title>
+  <meta name="description" content="Meet the Debating Society of IIEST Shibpur: a student-led community for debate, public speaking, Model United Nations, and learning together.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Gochi+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="history.css">
 </head>
+<body class="about-page">
+  <div id="site-nav"></div>
 
-<body class="editorial-page">
+  <header class="history-masthead">
+    <div class="history-masthead-inner">
+      <p class="history-kicker">DEBSOC / IIEST SHIBPUR / ABOUT US</p>
+      <h1>Ideas in<br><span>conversation.</span></h1>
+      <p class="history-intro">A student-led community for debate, dialogue, and becoming a little more confident every time you speak.</p>
+      <div class="history-index"><span>THINK</span><i></i><span>SPEAK</span><i></i><span>LISTEN</span></div>
+    </div>
+    <div class="masthead-mark" aria-hidden="true">D</div>
+  </header>
 
-  
+  <main class="history-feed" aria-label="About the Debating Society">
+    <article class="history-entry history-entry--poster history-entry--bold-blue" aria-labelledby="about-title">
+      <div class="entry-layout">
+        <header class="entry-head">
+          <p class="entry-meta"><span>IIEST Shibpur</span><i></i><span>Student-led since its early years</span></p>
+          <h2 id="about-title">Why DebSoc?</h2>
+        </header>
+        <div class="entry-art">
+          <figure class="entry-cover">
+            <img class="cover-image" src="photos/freshers.webp" alt="DebSoc members and students gathered for a session" role="button" tabindex="0" aria-label="View full-screen: DebSoc members and students gathered for a session" loading="lazy" decoding="async">
+            <span class="cover-caption">01 / THE COMMUNITY</span>
+          </figure>
+          <div class="event-gallery" aria-label="DebSoc events and community">
+            <figure class="event-thumb"><img src="Gallery&Logo/People.webp" alt="DebSoc members at an event" role="button" tabindex="0" aria-label="View full-screen: DebSoc members at an event" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="Gallery&Logo/DebsocMeet.webp" alt="DebSoc members meeting together" role="button" tabindex="0" aria-label="View full-screen: DebSoc members meeting together" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="photos/2026_1.webp" alt="DebSoc delegation at an external MUN" role="button" tabindex="0" aria-label="View full-screen: DebSoc delegation at an external MUN" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="photos/2025_1.webp" alt="DebSoc members representing IIEST" role="button" tabindex="0" aria-label="View full-screen: DebSoc members representing IIEST" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="Gallery&Logo/becon/becon_1.webp" alt="Delegates at BECON" role="button" tabindex="0" aria-label="View full-screen: Delegates at BECON" loading="lazy" decoding="async"></figure>
+          </div>
+        </div>
+        <div class="entry-copy">
+          <p class="entry-description">The Debating Society of IIEST, Shibpur, or DebSoc, is a student-led community built around conversation, critical thinking, and public speaking. Since its early years, the society has served as a space where students come together to debate ideas, challenge perspectives, and learn to express themselves clearly and confidently.</p>
+          <p class="entry-description">What began as small weekly discussions gradually evolved into one of the institute’s most active platforms for debate and Model United Nations. Over the years, DebSoc has hosted Oxford-style debates, parliamentary formats, public speaking sessions, memorial debates, and MUN conferences, while representing IIEST at institutions across the country, including IIT Kharagpur, IISER Kolkata, Jadavpur University, and IIT Guwahati. Members have earned recognition in diplomacy, public speaking, and delegation performance.</p>
+          <p class="entry-description">But DebSoc has never been defined only by awards. Many members join with little or no experience in debating or public speaking. Through regular sessions, practice debates, workshops, and peer mentorship, students gradually develop confidence in speaking, thinking critically, and listening carefully.</p>
+          <p class="entry-description">The society hosts flagship events throughout the year, including BECON (Bengal Engineering Conclave of Nations), the Paramesh Ranjan Dhar Memorial Debate, Disputation, Voices in Focus, and collaborative events under Instruo and TechManthan. Each reflects the same spirit: open discussion, intellectual curiosity, and meaningful dissent.</p>
+          <p class="entry-description">Even during the pandemic, DebSoc continued conducting online debates, training sessions, and inductions, proving that the community extended far beyond physical rooms or auditoriums. That continuity remains one of its defining strengths.</p>
+          <p class="entry-description">Today, DebSoc brings together students from different disciplines and backgrounds who share an interest in ideas, dialogue, and expression. Whether someone joins to compete nationally, improve communication skills, explore international relations, or become more confident speaking in public, the society offers a space to grow.</p>
+          <div class="entry-endmark">DEBSOC / IIEST SHIBPUR</div>
+        </div>
+      </div>
+    </article>
 
-  <section class="page-hero fade-in">
-    <img src="Gallery&Logo/debating_society.png" alt="The Debating Society of IIEST Shibpur">
+    <article class="history-entry history-entry--collage" aria-labelledby="batch-title">
+      <div class="entry-layout">
+        <header class="entry-head">
+          <p class="entry-meta"><span>A note for new members</span><i></i><span>Batch of 2030</span></p>
+          <h2 id="batch-title">To the Batch of 2030</h2>
+        </header>
+        <div class="entry-art">
+          <figure class="entry-cover">
+            <img class="cover-image" src="photos/2026_2.webp" alt="DebSoc students learning and taking part together" role="button" tabindex="0" aria-label="View full-screen: DebSoc students learning and taking part together" loading="lazy" decoding="async">
+            <span class="cover-caption">02 / YOUR FIRST SESSION</span>
+          </figure>
+          <div class="event-gallery" aria-label="Moments from DebSoc">
+            <figure class="event-thumb"><img src="photos/2026_3.webp" alt="DebSoc members at a conference" role="button" tabindex="0" aria-label="View full-screen: DebSoc members at a conference" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="photos/2026_4.webp" alt="A moment from a society event" role="button" tabindex="0" aria-label="View full-screen: A moment from a society event" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="photos/2024_1.webp" alt="DebSoc members participating in an event" role="button" tabindex="0" aria-label="View full-screen: DebSoc members participating in an event" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="photos/2024_2.webp" alt="Students sharing a moment at an event" role="button" tabindex="0" aria-label="View full-screen: Students sharing a moment at an event" loading="lazy" decoding="async"></figure>
+            <figure class="event-thumb"><img src="Gallery&Logo/becon/becon_12.webp" alt="Delegates gathered at BECON" role="button" tabindex="0" aria-label="View full-screen: Delegates gathered at BECON" loading="lazy" decoding="async"></figure>
+          </div>
+        </div>
+        <div class="entry-copy">
+          <p class="entry-description">If you are considering joining DebSoc, there is something important to know early: <strong>you do not</strong> need to arrive polished, confident, or impossibly articulate. Nobody walks into a room at eighteen speaking like a diplomat who swallowed three newspapers and a law textbook. Most people begin awkwardly. They interrupt too early, forget points halfway through, panic during rebuttals, or discover that “winning arguments” and “communicating clearly” are very different skills. That is normal.</p>
+          <p class="entry-description">DebSoc has always been built around people learning publicly. Members have come from every background: students who loved politics, students terrified of public speaking, people who joined for MUNs, and people who stayed for the discussions after sessions ended. Some went on to win competitions. Some became more thoughtful, more confident, and more capable of expressing themselves in classrooms, interviews, meetings, and life beyond college. Both matter equally.</p>
+          <p class="entry-description">What survives in a society is rarely just trophies. It is culture: seniors staying back to help juniors prepare speeches, people showing up after bad performances, disagreements remaining respectful, and curiosity being encouraged instead of mocked. Across uneven years and changing batches, DebSoc has managed to preserve that spirit remarkably well. Which is mildly miraculous by student-organisation standards. Most college groups collapse the moment Google Drive passwords are lost.</p>
+          <p class="entry-description">You will debate serious topics here and occasionally ridiculous ones. You will probably lose arguments you were convinced you would win. You may discover that listening carefully is harder than speaking loudly. You will also find people willing to help you improve if you are willing to put in the effort consistently.</p>
+          <p class="entry-description">And that is really the only expectation: show up. Speak. Listen. Learn. Return the next week and do it again.</p>
+          <p class="entry-description">Because in the end, DebSoc is not defined only by competitions, events, or committee names. It is defined by generations of students choosing, year after year, to think critically, speak honestly, and engage with the world a little more carefully than before.</p>
+          <div class="entry-endmark">THINK / SPEAK / LISTEN</div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <section class="archive">
+    <div class="archive-inner">
+      <p class="history-kicker">DEBSOC / ARCHIVE ACCESS</p>
+      <h2>The full story.</h2>
+      <p>Events, milestones, and the people behind them — start at the very beginning. This is us, this is you. Eta amader club, nijer club.</p>
+      <a class="award-item" href="debsoc_iiest_timeline_with_photos.html"><span class="award-mark" aria-hidden="true">→</span><span><b>Explore the DebSoc timeline</b><small>Open the full story in photos</small></span></a>
+    </div>
   </section>
 
-  <div class="intro-section">
-    <div class="intro-grid">
+  <dialog id="image-viewer" class="image-viewer" aria-label="Image viewer">
+    <button class="image-viewer-close" type="button" autofocus>Close</button>
+    <img alt="">
+  </dialog>
 
-      <div class="intro-text-block reveal">
+  <script>
+    const imageViewer = document.getElementById("image-viewer");
+    const viewerImage = imageViewer.querySelector("img");
+    const closeViewer = () => imageViewer.close();
 
-        <h2 class="intro-headline">Why Debsoc?&nbsp;</h2>
-        <div class="intro-body">
-          <p>
-            The Debating Society of IIEST, Shibpur, or DebSoc, is a student-led community built around conversation,
-            critical thinking, and public speaking. Since its early years, the society has served as a space where
-            students come together to debate ideas, challenge perspectives, and learn the art of expressing themselves
-            clearly and confidently.
-          </p>
-
-          <p>
-            What began as small weekly discussions gradually evolved into one of the institute’s most active platforms
-            for debate and Model United Nations. Over the years, DebSoc has hosted Oxford-style debates, parliamentary
-            formats, public speaking sessions, memorial debates, and MUN conferences, while also representing IIEST at
-            institutions across the country including IIT Kharagpur, IISER Kolkata, Jadavpur University, and IIT
-            Guwahati. The society has consistently participated in national debate and MUN circuits, earning accolades
-            in diplomacy, public speaking, and delegation performance.
-          </p>
-
-          <p>
-            But DebSoc has never been defined only by awards. At its core, it remains a place for learning. Many members
-            join with little or no experience in debating or public speaking. Through regular sessions, practice
-            debates, workshops, and peer mentorship, students gradually develop confidence not just in speaking, but in
-            thinking critically and listening carefully.
-          </p>
-
-          <p>
-            The society also hosts several flagship events through the year, including the BECON(Bengal Engineering Conclave of Nations),Paramesh Ranjan Dhar Memorial
-            Debate, Disputation(induction), Voices in Focus and collaborative debate events under Instruo, TechManthan. Each event
-            reflects the same spirit that has carried the society forward for years: open discussion, intellectual
-            curiosity, and meaningful dissent.
-          </p>
-
-          <p>
-            Even during the pandemic, DebSoc continued conducting online debates, training sessions, and inductions,
-            proving that the community extended far beyond physical rooms or auditoriums. That continuity remains one of
-            its defining strengths.
-          </p>
-
-          <p>
-            Today, DebSoc is home to students from different disciplines and backgrounds who share a common interest in
-            ideas, dialogue, and expression. Whether someone joins to compete nationally, improve communication skills,
-            explore international relations, or simply become more confident speaking in public, the society offers a
-            space to grow.
-          </p>
-        </div>
-      </div>
-
-      <div class="cta-section">
-        <div class="cta-inner reveal">
-          <a class="cta-art-link" href="debsoc_iiest_timeline_with_photos.html" aria-label="Open the full DebSoc timeline">
-            <img class="cta-art" src="photos/sach_ipod.jpg" alt="Retro yellow iPod illustration">
-          </a>
-          <div class="cta-copy">
-            <div class="cta-eyebrow">DEBSOC // ARCHIVE ACCESS</div>
-            <h2 class="cta-headline">Next: the full story.</h2>
-            <p class="cta-sub">There's a lot more behind everything you see here. The events, the things, the milestones, and all that we are still working towards, it's all part of this. So this is your chance to go through it all. Start at the very very beginning, this is us, this is YOU! <br>[eta Amader Club, Nijer Club!]</p>
-            <div class="cta-buttons">
-              <a class="btn-primary" href="debsoc_iiest_timeline_with_photos.html" aria-label="Open the full DebSoc timeline">
-                <img src="photos/button.png" alt="Next">
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="intro-text-block reveal">
-        <h2 class="intro-headline">To The Batch of 2030</h2>
-        <div class="intro-body">
-          <p>
-            If you are reading this as someone considering joining DebSoc, there is something important you should know
-            early: <strong>you do not</strong> need to arrive here already polished, confident, or impossibly articulate. Despite what
-            competitive debate culture on the internet likes to pretend, nobody walks into a room at eighteen speaking
-            like a diplomat who swallowed three newspapers and a law textbook. Most people begin awkwardly. Most people
-            interrupt too early, forget points halfway through speaking, panic during rebuttals, or discover that
-            “winning arguments” and “communicating clearly” are very different skills. That is normal.
-          </p>
-
-          <p>
-            DebSoc has always been built around people learning publicly. Over the years, members have come from every
-            background imaginable: students who loved politics, students terrified of public speaking, people who joined
-            for MUNs, people who stayed for the discussions after sessions ended. Some went on to win competitions. Some
-            simply became more thoughtful, more confident, more capable of expressing themselves in classrooms,
-            interviews, meetings, and life beyond college. Both matter equally.
-          </p>
-
-          <p>
-            What survives in a society is rarely just trophies. It is culture. It is whether seniors stay back after
-            sessions to help juniors prepare speeches. Whether people keep showing up after bad performances. Whether
-            disagreements remain respectful. Whether curiosity is encouraged instead of mocked. DebSoc, through all its
-            uneven years and changing batches, has managed to preserve that spirit remarkably well. Which is mildly
-            miraculous by student-organisation standards. Most college groups collapse the moment Google Drive passwords
-            are lost.
-          </p>
-
-          <p>
-            You will debate serious topics here and occasionally ridiculous ones. You will probably lose arguments you
-            were convinced you would win. You may discover that listening carefully is harder than speaking loudly. You
-            will also find people willing to help you improve if you are willing to put in the effort consistently.
-          </p>
-
-          <p>
-            And that is really the only expectation: show up. Speak. Listen. Learn. Return the next week and do it
-            again.
-          </p>
-
-          <p>
-            Because in the end, DebSoc is not defined only by competitions, events, or committee names. It is defined by
-            generations of students choosing, year after year, to think critically, speak honestly, and engage with the
-            world a little more carefully than before.
-          </p>
-        </div>
-      </div>
-      
-
-      <footer class="px-6 py-12" style="background-color:#1a0008;">
-    <div class="max-w-6xl mx-auto">
-      <div class="grid md:grid-cols-4 gap-8 mb-8">
-        <div class="md:col-span-2">
-          <div class="flex items-center gap-3 mb-4">
-            <img src="debsoclogo.webp" alt="DEBSOC Logo" class="h-12 w-auto object-contain">
-            <span class="font-display font-bold text-lg" style="color:#FFFFFF;">DebSoc</span>
-          </div>
-          <p class="text-sm opacity-70 max-w-xs" style="color:#FAF7F2;">A community dedicated to the synthesis of technical precision and humanistic inquiry. Through debates and formal discourse, we equip the scholars with the cognitive agility to dissect multifaceted issues and defend truth through reasoned conviction.</p>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-4" style="color:#DAA520;">Quick Links</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="index.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Home</a></li>
-            <li><a href="events.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Events</a></li>
-            <li><a href="tribunal.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Tribunal</a></li>
-            <li><a href="contactpage.html" class="opacity-70 hover:opacity-100 transition-opacity" style="color:#FAF7F2;">Contact</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold mb-4" style="color:#DAA520;">Connect</h4>
-          <div class="flex gap-3">
-            <a href="https://www.instagram.com/debsoc_iiests" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all" style="background-color:rgba(218,165,32,0.2);">
-              <svg class="w-5 h-5" fill="#DAA520" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-            </a>
-            <a href="https://www.linkedin.com/company/debsoc-iiest-shibpur/" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-all" style="background-color:rgba(218,165,32,0.2);">
-              <svg class="w-5 h-5" fill="#DAA520" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="pt-8 border-t text-center" style="border-color:rgba(218,165,32,0.2);">
-        <p class="text-sm opacity-60" style="color:#FAF7F2;">© 2026 The Debating Society. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-  
-      <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-      <script>
-        function toggleMobileMenu() {
-          const menu = document.getElementById('mobile-menu');
-          menu.classList.toggle('hidden');
-        }
-        document.addEventListener('click', function (e) {
-          const menu = document.getElementById('mobile-menu');
-          const btn = document.getElementById('hamburger-btn');
-          if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !btn.contains(e.target)) {
-            menu.classList.add('hidden');
-          }
-        });
-
-        const reveals = document.querySelectorAll('.reveal');
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-        }, { threshold: 0.1 });
-        reveals.forEach(el => observer.observe(el));
-      </script>
-
-<script src="footer.js"></script>
-<script src="nav.js"></script>
+    document.querySelector(".history-feed").addEventListener("click", (event) => {
+      const image = event.target.closest(".entry-cover img, .event-thumb img");
+      if (!image) return;
+      viewerImage.src = image.currentSrc || image.src;
+      viewerImage.alt = image.alt;
+      imageViewer.showModal();
+    });
+    document.querySelector(".history-feed").addEventListener("keydown", (event) => {
+      if ((event.key !== "Enter" && event.key !== " ") || !event.target.matches(".entry-cover img, .event-thumb img")) return;
+      event.preventDefault();
+      event.target.click();
+    });
+    imageViewer.querySelector(".image-viewer-close").addEventListener("click", closeViewer);
+    imageViewer.addEventListener("click", (event) => {
+      if (event.target === imageViewer) closeViewer();
+    });
+  </script>
+  <script src="nav.js"></script>
+  <script src="footer.js"></script>
 </body>
-
 </html>
